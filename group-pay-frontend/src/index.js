@@ -3,11 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import MerchantHeader from './Components/MerchantHeader';
+import MerchantLogin from './Components/MerchantLogin';
+import {BrowserRouter as Router, Routes,Route} from 'react-router-dom';
+import MerchantDashboard from './Components/MerchantDashboard';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+     <App/>
   </React.StrictMode>
 );
 
