@@ -1,0 +1,44 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body{
+    background-color: rgb(241, 244, 248);
+
+}
+.form-container{
+   
+    background-color: #fff;
+    
+    margin: 15% 30%;
+    border: solid black 1px;
+    border-radius: 15px;
+    box-shadow: 5px 5px 20px 20px rgba(0,0,0,0);
+
+}
+.form-container h2{
+    text-align: center;
+    margin-bottom: 20px;
+    border-top-left-radius: 15px;
+    border-top-right-radius: 15px;
+    padding: 5px;
+    background-color: rgb(13,110,253);
+    color: #fff;
+    
+}
+.form-container form{
+    padding: 20px;
+
+}
+.lform-control{
+    margin-bottom: 20px;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: 2px 2px 10px rgba(0,0,0);
+}
+.form-container button{
+    padding: 5px;
+    box-shadow: 2px 2px 10px rgba(0,0,0);
+}

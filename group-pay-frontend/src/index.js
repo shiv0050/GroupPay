@@ -3,11 +3,16 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import MerchantFooter from './Components/MerchantFooter';
+import MerchantHeader from './Components/MerchantHeader';
+import MerchantLogin from './Components/MerchantLogin';
+import { FaUser,FaLock } from "react-icons/fa";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <App />
+    <MerchantLogin FaUser={FaUser} FaLock={FaLock} />
+    {/* <MerchantHeader /> */}
   </React.StrictMode>
 );
 
