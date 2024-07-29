@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.util.UUID;
 
-@Getter
 @Data
 public class AddUserResponse {
 
