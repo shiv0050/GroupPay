@@ -1,7 +1,7 @@
-package com.example.GroupPayMerchant.entity;
+package com.example.GroupPayMerchant.enums;
 
 public enum Status {
-    PENDING,
+    FAILED,
     IN_PROGRESS,
     COMPLETED,
     CANCELLED;

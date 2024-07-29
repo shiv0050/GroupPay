@@ -1,6 +1,7 @@
-package com.example.GroupPayMerchant.entity;
+package com.example.GroupPayMerchant.models;
 
 
+import com.example.GroupPayMerchant.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 
