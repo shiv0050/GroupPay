@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: GroupPay
+  datasource:
+    url: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8722589?createDatabaseIfNotExist=true
+    username: sql8722589
+    password: MlYcPwAPTp
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8002
+
+jwt:
+  secret: 8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIodyudkhhhhbehhiuehuigvfxdt776e54
