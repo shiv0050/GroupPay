@@ -16,7 +16,7 @@ public class User {
     private UUID userId;
     @Column(name = "Name", nullable = false)
     private String name;
-    @Column(name = "Email", nullable = false)
+    @Column(name = "Email", nullable = false, unique = true)
     private String email;
     @Column(name = "Password", nullable = false)
     private String password;

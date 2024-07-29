@@ -1,7 +1,6 @@
 package com.example.GroupPayMerchant.service;
 
 import com.example.GroupPayMerchant.models.requests.AddUserRequest;
-import com.example.GroupPayMerchant.models.User;
 
 import java.util.Map;
 
