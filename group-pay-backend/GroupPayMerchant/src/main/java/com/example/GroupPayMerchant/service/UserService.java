@@ -6,7 +6,7 @@ import java.util.Map;
 
 public interface UserService {
 
-    public String  loginUser(String email, String password);
+    String  loginUser(String email, String password);
 
-    public Map<String, Object> signUp(AddUserRequest body);
+    Map<String, Object> signUp(AddUserRequest body);
 }
