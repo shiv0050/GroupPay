@@ -7,9 +7,5 @@ public enum PaymentStatus {
     FAILED,
 <<<<<<< Updated upstream
     CANCELLED;
-=======
-    CANCELLED,
-    PENDING;
 
->>>>>>> Stashed changes
 }
