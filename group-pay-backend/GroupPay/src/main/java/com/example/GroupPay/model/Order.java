@@ -23,7 +23,7 @@ public class Order {
     private Timestamp createdAt;
 
     @Column(name = "merchant_id", nullable = false)
-    private UUID merchantId;
+    private String merchantId;
 
     @Column(name = "merchant_name", nullable = false)
     private String merchantName;
@@ -49,7 +49,7 @@ public class Order {
     public Order() {
     }
 
-    public Order(UUID id, Timestamp createdAt, UUID merchantId, String merchantName, Double amount, OrderStatus status, int numOfContributors, Timestamp expiryTime, UUID referenceId) {
+    public Order(UUID id, Timestamp createdAt, String merchantId, String merchantName, Double amount, OrderStatus status, int numOfContributors, Timestamp expiryTime, UUID referenceId) {
         this.id = id;
         this.createdAt = createdAt;
         this.merchantId = merchantId;
@@ -77,11 +77,11 @@ public class Order {
         this.createdAt = createdAt;
     }
 
-    public UUID getMerchantId() {
+    public String getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(UUID merchantId) {
+    public void setMerchantId(String merchantId) {
         this.merchantId = merchantId;
     }
 

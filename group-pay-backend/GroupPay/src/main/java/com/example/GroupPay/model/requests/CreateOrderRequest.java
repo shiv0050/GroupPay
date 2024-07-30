@@ -11,7 +11,7 @@ import java.util.UUID;
 public class CreateOrderRequest {
 
     @NotNull(message = "Merchant id cannot be blank")
-    private UUID merchantId;
+    private String merchantId;
 
     @NotBlank(message = "Merchant name cannot be blank")
     private String merchantName;
