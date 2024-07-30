@@ -4,6 +4,7 @@ import com.example.GroupPay.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -15,13 +16,14 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
+    @UuidGenerator
     private UUID id;
 
     @Column(name = "created_at", nullable = false)
     private Timestamp createdAt;
 
     @Column(name = "merchant_id", nullable = false)
-    private UUID merchantId;
+    private String merchantId;
 
     @Column(name = "merchant_name", nullable = false)
     private String merchantName;
@@ -41,12 +43,13 @@ public class Order {
     private Timestamp expiryTime;
 
     @Column(name = "reference_id")
+    @UuidGenerator
     private UUID referenceId;
 
     public Order() {
     }
 
-    public Order(UUID id, Timestamp createdAt, UUID merchantId, String merchantName, Double amount, OrderStatus status, int numOfContributors, Timestamp expiryTime, UUID referenceId) {
+    public Order(UUID id, Timestamp createdAt, String merchantId, String merchantName, Double amount, OrderStatus status, int numOfContributors, Timestamp expiryTime, UUID referenceId) {
         this.id = id;
         this.createdAt = createdAt;
         this.merchantId = merchantId;
@@ -74,11 +77,11 @@ public class Order {
         this.createdAt = createdAt;
     }
 
-    public UUID getMerchantId() {
+    public String getMerchantId() {
         return merchantId;
     }
 
-    public void setMerchantId(UUID merchantId) {
+    public void setMerchantId(String merchantId) {
         this.merchantId = merchantId;
     }
 

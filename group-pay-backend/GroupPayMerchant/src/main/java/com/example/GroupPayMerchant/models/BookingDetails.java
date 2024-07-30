@@ -3,6 +3,7 @@ package com.example.GroupPayMerchant.models;
 import com.example.GroupPayMerchant.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -13,8 +14,9 @@ import java.util.UUID;
 public class BookingDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Booking_id")
+    @UuidGenerator
     private UUID id;
 
     @Column(name = "No_of_contributors")
