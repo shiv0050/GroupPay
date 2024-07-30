@@ -11,7 +11,8 @@ import { FaUser,FaLock } from "react-icons/fa";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <MerchantLogin FaUser={FaUser} FaLock={FaLock} />
+    <App/>
+    {/* <MerchantLogin FaUser={FaUser} FaLock={FaLock} /> */}
     {/* <MerchantHeader /> */}
   </React.StrictMode>
 );

@@ -1,4 +1,4 @@
-package com.example.GroupPayMerchant.entity;
+package com.example.GroupPayMerchant.models;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

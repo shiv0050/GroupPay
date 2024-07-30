@@ -1,6 +1,6 @@
 package com.example.GroupPayMerchant.repository;
 
-import com.example.GroupPayMerchant.entity.BookingDetails;
+import com.example.GroupPayMerchant.models.BookingDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

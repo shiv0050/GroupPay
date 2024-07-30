@@ -1,10 +1,12 @@
 package com.example.GroupPayMerchant.service;
 
-import com.example.GroupPayMerchant.entity.User;
+import com.example.GroupPayMerchant.models.requests.AddUserRequest;
+
+import java.util.Map;
 
 public interface UserService {
 
-    boolean loginUser(String email, String password);
+    Map<String, Object>  loginUser(String email, String password);
 
-    boolean signUp(User user);
+    Map<String, Object> signUp(AddUserRequest body);
 }
