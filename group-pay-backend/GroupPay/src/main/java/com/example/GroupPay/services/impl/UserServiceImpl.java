@@ -14,8 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,12 +29,22 @@ public class UserServiceImpl implements UserService {
     PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
-    public String login(String username, String password) {
+    public Map<String, Object> login(String username, String password) {
         User user = userRepository.findByEmailIgnoreCaseOrPhone(username, username);
 
         if (user != null) {
             if (passwordEncoder.matches(password, user.getPassword())) {
-                return getToken("" + user.getId());
+                AddUserResponse newUser = new AddUserResponse();
+                newUser.setUserId(user.getId());
+                newUser.setFirstName(user.getFirstName());
+                newUser.setLastName(user.getLastName());
+                newUser.setEmail(user.getEmail());
+
+                Map<String, Object> res = new HashMap<>();
+                res.put("user", newUser);
+                res.put("userToken", getToken("" + newUser.getUserId()));
+
+                return res;
             }
 
             throw new InvalidCredentialException("Invalid Password");

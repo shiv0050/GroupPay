@@ -2,6 +2,7 @@ package com.example.GroupPay.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.util.UUID;
 
@@ -12,6 +13,7 @@ public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
+    @UuidGenerator
     private UUID id;
 
     @Column(name = "user_id", nullable = false)
