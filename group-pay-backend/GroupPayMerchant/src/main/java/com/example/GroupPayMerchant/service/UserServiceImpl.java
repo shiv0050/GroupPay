@@ -1,21 +1,19 @@
 package com.example.GroupPayMerchant.service;
 
+import com.example.GroupPayMerchant.models.User;
 import com.example.GroupPayMerchant.models.requests.AddUserRequest;
 import com.example.GroupPayMerchant.models.responses.AddUserResponse;
-import com.example.GroupPay.utils.ConvertDate;
 import com.example.GroupPayMerchant.exceptions.InvalidCredentialException;
-import com.example.GroupPayMerchant.models.User;
 import com.example.GroupPayMerchant.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.GroupPayMerchant.utils.JWTUtil;
+import org.springframework.stereotype.Service;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -30,13 +28,8 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-<<<<<<< Updated upstream
-    public String loginUser(String email, String password) {
-        com.example.GroupPayMerchant.models.User user = userRepository.findByEmail(email);
-=======
     public Map<String, Object> loginUser(String email, String password) {
         User user = userRepository.findByEmail(email);
->>>>>>> Stashed changes
 
         if (user != null) {
             if (passwordEncoder.matches(password, user.getPassword())) {
@@ -54,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, Object> signUp(AddUserRequest userRequest) {
-        com.example.GroupPayMerchant.models.User user = new com.example.GroupPayMerchant.models.User();
+        User user = new User();
         AddUserResponse newUser = new AddUserResponse();
         BeanUtils.copyProperties(userRequest, user, "password");
         String encodedPass = passwordEncoder.encode(userRequest.getPassword());

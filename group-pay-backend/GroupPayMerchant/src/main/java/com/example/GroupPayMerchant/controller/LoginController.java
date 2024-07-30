@@ -1,10 +1,10 @@
 package com.example.GroupPayMerchant.controller;
 
-import com.example.GroupPayMerchant.models.User;
+
 import com.example.GroupPayMerchant.models.requests.AddUserRequest;
 import com.example.GroupPayMerchant.models.requests.LoginRequest;
 import com.example.GroupPayMerchant.service.UserService;
-import com.example.GroupPayMerchant.service.UserServiceImpl;
+
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
