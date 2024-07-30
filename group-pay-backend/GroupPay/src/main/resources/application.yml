@@ -2,9 +2,10 @@ spring:
   application:
     name: GroupPay
   datasource:
-    url: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8722589?createDatabaseIfNotExist=true
-    username: sql8722589
-    password: MlYcPwAPTp
+#    url: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8722589?createDatabaseIfNotExist=true
+    url: jdbc:mysql://group-pay-bankofapis.e.aivencloud.com:10616/bankofapis?createDatabaseIfNotExist=true
+    username: avnadmin
+    password:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -27,3 +28,6 @@ eureka:
 
 jwt:
   secret: a21f6cf93e1b7a924b7667f1d95c907ca6335ceb4012c3e717dfe5201aad7340
+
+merchant:
+  base-url: http://127.0.0.1:8002

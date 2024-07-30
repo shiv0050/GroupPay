@@ -22,8 +22,11 @@ public class Transaction {
     @Column(name = "user_id", nullable = false)
     private long userId;
 
-    @Column(name = "order_id", nullable = false)
-    private long orderId;
+    @Column(name = "order_reference_id", nullable = false)
+    private UUID orderReferenceId;
+
+    @Column(name = "reference_id", nullable = false)
+    private UUID referenceId;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -32,13 +35,25 @@ public class Transaction {
     @Column(name = "amount", nullable = false)
     private double amount;
 
-    public Transaction(UUID id, Timestamp createdAt, long userId, long orderId, TransactionStatus status, double amount) {
+    public Transaction() {
+    }
+
+    public Transaction(UUID id, Timestamp createdAt, long userId, UUID orderId, UUID txnReferenceId, TransactionStatus status, double amount) {
         this.id = id;
         this.createdAt = createdAt;
         this.userId = userId;
-        this.orderId = orderId;
+        this.orderReferenceId = orderId;
+        this.referenceId = txnReferenceId;
         this.status = status;
         this.amount = amount;
+    }
+
+    public UUID getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(UUID referenceId) {
+        this.referenceId = referenceId;
     }
 
     public UUID getId() {
@@ -65,12 +80,12 @@ public class Transaction {
         this.userId = userId;
     }
 
-    public long getOrderId() {
-        return orderId;
+    public UUID getOrderReferenceId() {
+        return orderReferenceId;
     }
 
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
+    public void setOrderReferenceId(UUID orderReferenceId) {
+        this.orderReferenceId = orderReferenceId;
     }
 
     public TransactionStatus getStatus() {

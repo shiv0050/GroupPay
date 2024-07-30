@@ -4,6 +4,8 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 public class ConvertDate {
 
@@ -25,5 +27,9 @@ public class ConvertDate {
         } catch (ParseException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    public static Timestamp calculateFutureTimestamp(Instant now, int hours){
+        return Timestamp.from(now.plus(hours, ChronoUnit.HOURS));
     }
 }
