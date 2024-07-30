@@ -9,7 +9,7 @@ import MerchantCheckout from './Components/MerchantCheckout';
 export const AuthContext = createContext();
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
 
   return (
     <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>

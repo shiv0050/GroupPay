@@ -1,11 +1,13 @@
 import { Form, Button, Alert, Dropdown } from "react-bootstrap";
-import { useState } from "react";
+import { useState,useContext } from "react";
 import { useLocation ,useNavigate} from "react-router-dom";
 import {v4 } from 'uuid';
 import { FaCreditCard } from "react-icons/fa";
 import { RiBankFill } from "react-icons/ri";
+import axios from "axios";
 
 import img from "../assets/background.avif";
+import { AuthContext } from "../App";
 
 function MerchantCheckout()
 {
@@ -17,6 +19,7 @@ function MerchantCheckout()
     const [total, settotal] = useState(0)
     const [userId, setuserId]=useState(v4())
     const [show, setshow] = useState(false)
+    const {isLoggedIn}=useContext(AuthContext)
     const nevigate=useNavigate();
 
     const handlePerson=(e)=>{
@@ -31,7 +34,16 @@ function MerchantCheckout()
     }
     const handleSubmit=(e)=>{
         e.preventDefault();
-        {show?nevigate("/bankingPage",{state:[userId,id,person,total]}):nevigate("/")}
+        if(show)
+        {   axios.post("http://localhost:8002/merchant-user/newBooking",{numberOfContributors:person,amount:total,initiatorId:isLoggedIn.userId,productId:id})
+            .then((data)=>console.log(data.data))
+            .catch((err)=>console.log(err));
+            nevigate("/bankingPage",{state:[userId,id,person,total]})
+        }
+        else{
+            nevigate("/")
+        }
+        
     };
     return(
         <div className="checkout-page" style={{backgroundImage:`url(${img})`,backgroundSize: 'cover',backgroundPosition: 'center'}} >

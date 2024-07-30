@@ -36,7 +36,7 @@ function MerchantHeader() {
         <button className="btn btn-sm  " type="submit" style={{ margin: '0.2em' ,color:'white'}}> Search</button>
         
       </form>
-      {isLoggedIn?<FaUserLarge/>:
+      {isLoggedIn!=null?<FaUserLarge/>:
       <button className="btn btn-sm " type="submit"style={{color:'white'}}  onClick={handleLogin}>Login</button>
        } 
     </div>

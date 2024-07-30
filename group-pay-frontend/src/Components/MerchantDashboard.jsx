@@ -14,7 +14,7 @@ function MerchantDashboard() {
     const {isLoggedIn}=useContext(AuthContext);
     const handleBookNow=([price,place,id])=>{
         console.log(isLoggedIn);
-        {isLoggedIn?nevigate("/checkout",{state:[price,place,id]}):nevigate("/login")}
+        {isLoggedIn!=null?nevigate("/checkout",{state:[price,place,id]}):nevigate("/login")}
     };
     return (
         <div style={{backgroundImage:`url(${img3})`,backgroundSize: 'cover',backgroundPosition: 'center', paddingBottom:'3rem'}}>

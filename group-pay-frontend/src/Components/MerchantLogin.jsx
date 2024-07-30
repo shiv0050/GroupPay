@@ -31,7 +31,7 @@ const Login = () => {
       }
       else{
   
-          setIsLoggedIn(true);
+          setIsLoggedIn(data.data.user);
           nevigate("/");
       }
     })
