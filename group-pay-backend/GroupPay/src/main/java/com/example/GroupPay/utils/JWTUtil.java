@@ -35,6 +35,21 @@ public class JWTUtil implements Serializable, EnvironmentAware {
         return claims;
     }
 
+    public String getUserFromToken(String token) {
+        return getAllClaimsFromToken(token).getSubject();
+    }
+
+    private Claims getAllClaimsFromToken(String token) {
+
+        Claims claims = Jwts.parser().setSigningKey(secret).build().parseSignedClaims(token).getBody();
+
+        if(!validateToken(claims)){
+            throw new MalformedJwtException("JWT not issued!");
+        }
+
+        return claims;
+    }
+
     private Boolean isTokenExpired(Claims claims) {
         final Date expiration = claims.getExpiration();
         return expiration.before(new Date());
@@ -58,11 +73,6 @@ public class JWTUtil implements Serializable, EnvironmentAware {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
-
-//    private Key getSignInKey() {
-//        byte[] keyBytes = Decoders.BASE64.decode(secret);
-//        return Keys.hmacShaKeyFor(keyBytes);
-//    }
 
     @Override
     public void setEnvironment(Environment environment) {
