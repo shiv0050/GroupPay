@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class BookingServiceImpl implements BookingService{
@@ -32,23 +33,24 @@ public class BookingServiceImpl implements BookingService{
     }
 
     @Override
-    public BookingDetails getBookingById(Integer id) {
+    public BookingDetails getBookingById(UUID id) {
         return bookingRepository.getReferenceById(id) ;
     }
 
     @Override
-    public void deleteBooking(Integer id) {
+    public void deleteBooking(UUID id) {
         bookingRepository.deleteById(id);
     }
 
     @Override
-    public BookingDetails updateStatus(Integer bookingId , String newStatus) {
+    public BookingDetails updateStatus(UUID bookingId , Status newStatus) {
 
-        BookingDetails bookingDetails = bookingRepository.findById(bookingId).orElseThrow(
-                ()-> new BookingIDNotFoundException("Booking not found with ID:" + bookingId)) ;
+        BookingDetails bookingDetails = bookingRepository.getReferenceById(bookingId);
+        if (bookingDetails==null)
+                throw new BookingIDNotFoundException("Booking not found with ID:" + bookingId);
 
         try{
-            Status  status = Status.valueOf(newStatus.toUpperCase()) ;
+            Status  status = newStatus ;
             bookingDetails.setStatus(status);
             return bookingRepository.save(bookingDetails) ;
         } catch (IllegalArgumentException e){
