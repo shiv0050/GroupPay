@@ -20,7 +20,7 @@ public class BookingDetails {
     private Integer numberOfContributors;
 
     @Column(name = "Amount")
-    private Double amount;
+    private double amount;
 
     @Column(name = "Initiator_id")
     private Integer initiatorId;

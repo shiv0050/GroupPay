@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class MerchantTransactionServiceImpl implements MerchantTransactionService {
@@ -19,7 +21,7 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
     MerchantTransactionsRepo transactionsRepo;
 
     @Override
-    public Map<String, Object> createTransaction(UUID userId, Double amount, UUID bookingId) {
+    public Map<String, Object> createTransaction(UUID userId, double amount, UUID bookingId) {
         MerchantTransactions transaction = new MerchantTransactions();
         transaction.setUserId(userId);
         transaction.setAmount(amount);
@@ -43,6 +45,13 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
 
         return true;
     }
+
+    @Override
+    public List<MerchantTransactions> getSuccessfulTransactions(UUID bookingId) {
+        List<MerchantTransactions> result = transactionsRepo.findAllByBookingId(bookingId);
+        return result.stream().filter(item->item.getPaymentStatus().equals(PaymentStatus.APPROVED)).collect(Collectors.toList());
+    }
+
 
 
 }
