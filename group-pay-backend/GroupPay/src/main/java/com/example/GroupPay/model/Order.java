@@ -4,6 +4,7 @@ import com.example.GroupPay.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.Data;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.sql.Timestamp;
 import java.util.UUID;
@@ -15,6 +16,7 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
+    @UuidGenerator
     private UUID id;
 
     @Column(name = "created_at", nullable = false)
@@ -41,6 +43,7 @@ public class Order {
     private Timestamp expiryTime;
 
     @Column(name = "reference_id")
+    @UuidGenerator
     private UUID referenceId;
 
     public Order() {

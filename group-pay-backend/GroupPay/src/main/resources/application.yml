@@ -5,7 +5,7 @@ spring:
 #    url: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8722589?createDatabaseIfNotExist=true
     url: jdbc:mysql://group-pay-bankofapis.e.aivencloud.com:10616/bankofapis?createDatabaseIfNotExist=true
     username: avnadmin
-    password:
+    password: AVNS_phRIoLjrR-0llqtiev_
 #    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
