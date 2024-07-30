@@ -14,9 +14,8 @@ import java.util.UUID;
 public class BookingDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "Booking_id")
-    @UuidGenerator
     private UUID id;
 
     @Column(name = "No_of_contributors")
@@ -29,9 +28,8 @@ public class BookingDetails {
     private UUID initiatorId;
 
     @Column(name = "Product_id")
-    private Integer productId;
+    private int productId;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "Completion_status")
     private Status status;
 
