@@ -1,5 +1,6 @@
 package com.example.GroupPayMerchant.controller;
 
+import com.example.GroupPayMerchant.models.MerchantTransactions;
 import com.example.GroupPayMerchant.models.requests.AddTransaction;
 import com.example.GroupPayMerchant.models.requests.LoginRequest;
 import com.example.GroupPayMerchant.models.requests.StatusUpdate;
@@ -10,7 +11,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/merchant-transaction")
@@ -27,7 +30,15 @@ public class MerchantTransactionController {
 
     @PutMapping("/notify")
     public ResponseEntity<HttpStatus> updateStatus(@Valid @RequestBody StatusUpdate body) {
+        if(transactionService.updateStatus(body.getPaymentRefId(),body.getStatus())) {
         return new ResponseEntity(HttpStatus.OK);
+        }
+        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping ("/transactions/{bookingId}")
+    public List<MerchantTransactions> getTransactions(@PathVariable UUID bookingId) {
+        return transactionService.getSuccessfulTransactions(bookingId);
     }
 
 }

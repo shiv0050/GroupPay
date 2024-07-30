@@ -13,11 +13,6 @@ import java.util.UUID;
 @Table(name = "merchant_transactions")
 public class MerchantTransactions {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "Transaction_id", nullable = false)
-    private UUID transactionId;
-
     @Column(name = "User_id", nullable = false)
     private UUID userId;
 
@@ -27,6 +22,7 @@ public class MerchantTransactions {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Id
     @Column(name = "Payment_Ref_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID paymentRefId;
@@ -36,5 +32,5 @@ public class MerchantTransactions {
     private PaymentStatus paymentStatus;
 
     @Column(name = "Amount")
-    private Double amount;
+    private double amount;
 }
