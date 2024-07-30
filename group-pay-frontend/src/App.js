@@ -4,6 +4,7 @@ import MerchantHeader from './Components/MerchantHeader';
 import MerchantLogin from './Components/MerchantLogin';
 import MerchantDashboard from './Components/MerchantDashboard';
 import MerchantFooter from './Components/MerchantFooter';
+import MerchantCheckout from './Components/MerchantCheckout';
 
 export const AuthContext = createContext();
 
@@ -15,8 +16,10 @@ function App() {
       <Router>
         <MerchantHeader />
         <Routes>
-          <Route path="/" element={<MerchantLogin />} />
-          <Route path="/merchantdashboard" element={<MerchantDashboard/>} /> 
+          
+          <Route path="/login" element={<MerchantLogin />} />
+          <Route path="/" element={<MerchantDashboard/>} /> 
+          <Route path="/checkout" element={<MerchantCheckout/>}/>
         </Routes>
         <MerchantFooter/>
       </Router>

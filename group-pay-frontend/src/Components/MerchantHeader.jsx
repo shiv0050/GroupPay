@@ -12,7 +12,7 @@ function MerchantHeader() {
     }
      const navigate = useNavigate();
     const handleLogin=()=>{
-      navigate('/');
+      navigate('/login');
     }
     return (
       <nav className="navbar navbar-expand-lg bg-primary"  style={{backgroundColor: '#002f72'}}>
@@ -27,7 +27,7 @@ function MerchantHeader() {
           <Link className="nav-link active" aria-current="page" to="/" style={{color:'white'}}>Home</Link>
         </li>
         <li className="nav-item">
-          <Link className="nav-link active" to="/merchantdashboard" style={{color:'white'}}>Dashboard</Link>
+          <Link className="nav-link active" to="/" style={{color:'white'}}>Dashboard</Link>
         </li>
         
       </ul>

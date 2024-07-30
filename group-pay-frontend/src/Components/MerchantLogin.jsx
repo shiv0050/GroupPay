@@ -1,9 +1,10 @@
-import React, { useState ,useContext} from "react";
+import React, { useState ,useContext, useEffect} from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import "./login.css";
 import { useNavigate } from "react-router-dom";
-
-
+import { RiBankFill } from "react-icons/ri";
+import axios from 'axios';
+import img from "../assets/background.avif";
 import Logo from "../assets/logo4.png";
 import { AuthContext } from "../App";
 
@@ -14,19 +15,29 @@ const Login = () => {
   const {setIsLoggedIn}=useContext(AuthContext);
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [data, setData] = useState([]);
+  const [success, setSuccess]=useState(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
     await delay(500);
     console.log(`Username :${inputUsername}, Password :${inputPassword}`);
-    if (inputUsername !== "admin" || inputPassword !== "admin") {
-      setShow(true);
-    }
-    else{
-        setIsLoggedIn(true);
-        nevigate("/merchantdashboard");
-    }
+    const response=axios.post("http://localhost:8002/merchant-user/login",{email:inputUsername,password:inputPassword})
+    .then(data => {
+      console.log(data.data.success);
+      if (!data.data.success) {
+        setShow(true);
+      }
+      else{
+  
+          setIsLoggedIn(true);
+          nevigate("/");
+      }
+    })
+    .catch(error => console.log(error));
+    console.log(response);
+    
     setLoading(false);
   };
 
@@ -36,9 +47,11 @@ const Login = () => {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
+
+
   return (
     <div
-      className="sign-in__wrapper"
+      className="sign-in__wrapper" style={{backgroundImage:`url(${img})`,backgroundSize: 'cover',backgroundPosition: 'center'}}
     >
       {/* Overlay */}
       <div className="sign-in__backdrop"></div>
@@ -69,7 +82,7 @@ const Login = () => {
           <Form.Control
             type="text"
             value={inputUsername}
-            placeholder="Username"
+            placeholder="Enter your email"
             onChange={(e) => setInputUsername(e.target.value)}
             required
           />
@@ -79,7 +92,7 @@ const Login = () => {
           <Form.Control
             type="password"
             value={inputPassword}
-            placeholder="Password"
+            placeholder="Enter Password"
             onChange={(e) => setInputPassword(e.target.value)}
             required
           />
