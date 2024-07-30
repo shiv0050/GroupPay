@@ -28,12 +28,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public String loginUser(String email, String password) {
+    public Map<String, Object> loginUser(String email, String password) {
         User user = userRepository.findByEmail(email);
 
         if (user != null) {
             if (passwordEncoder.matches(password, user.getPassword())) {
-                return getToken("" + user.getUserId());
+                Map<String, Object> res = new HashMap<>();
+                res.put("userToken", getToken("" + user.getUserId()));
+                res.put("user", user);
+                return res;
             }
 
             throw new InvalidCredentialException("Invalid Password");

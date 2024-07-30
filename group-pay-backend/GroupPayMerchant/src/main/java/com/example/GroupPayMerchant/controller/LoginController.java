@@ -22,7 +22,9 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest body) {
-        return ResponseEntity.ok(getMapResponse(userService.loginUser(body.getEmail(), body.getPassword())));
+        Map<String, Object> res = userService.loginUser(body.getEmail(), body.getPassword());
+        res.put("success", true);
+        return ResponseEntity.ok(res);
     }
 
     @PostMapping("/register")
