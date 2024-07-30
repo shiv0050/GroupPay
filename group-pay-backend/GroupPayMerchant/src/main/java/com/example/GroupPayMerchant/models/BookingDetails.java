@@ -23,15 +23,14 @@ public class BookingDetails {
     private Integer numberOfContributors;
 
     @Column(name = "Amount")
-    private Double amount;
+    private double amount;
 
     @Column(name = "Initiator_id")
     private UUID initiatorId;
 
     @Column(name = "Product_id")
-    private Integer productId;
+    private int productId;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "Completion_status")
     private Status status;
 
