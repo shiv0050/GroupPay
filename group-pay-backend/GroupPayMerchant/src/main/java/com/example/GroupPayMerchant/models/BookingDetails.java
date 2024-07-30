@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Data
@@ -12,23 +13,22 @@ import java.time.LocalDateTime;
 public class BookingDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "Booking_id")
-    private Integer id;
+    private UUID id;
 
     @Column(name = "No_of_contributors")
     private Integer numberOfContributors;
 
     @Column(name = "Amount")
-    private Double amount;
+    private double amount;
 
     @Column(name = "Initiator_id")
-    private Integer initiatorId;
+    private UUID initiatorId;
 
     @Column(name = "Product_id")
-    private Integer productId;
+    private int productId;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "Completion_status")
     private Status status;
 

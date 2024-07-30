@@ -1,9 +1,10 @@
 package com.example.GroupPayMerchant.service;
 
+import com.example.GroupPayMerchant.enums.Status;
 import com.example.GroupPayMerchant.models.BookingDetails;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface BookingService {
 
@@ -11,11 +12,11 @@ public interface BookingService {
 
    List<BookingDetails> getAllBookings() ;
 
-   BookingDetails getBookingById(Integer id) ;
+   BookingDetails getBookingById(UUID id) ;
 
 
-   void deleteBooking(Integer id) ;
+   void deleteBooking(UUID id) ;
 
-    BookingDetails updateStatus(Integer bookingId , String newStatus) ;
+    BookingDetails updateStatus(UUID bookingId , Status newStatus) ;
 
 }

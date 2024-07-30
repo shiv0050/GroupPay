@@ -17,5 +17,5 @@ public class Product {
     private Integer productId;
     private String destination;
     private Duration duration;
-    private Double price;
+    private double price;
 }
