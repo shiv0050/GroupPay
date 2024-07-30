@@ -22,3 +22,6 @@ merchant:
   details:
     name: Boooking.com
     id: NWB001
+
+bank:
+  base-url: http://127.0.0.1:8001

@@ -4,6 +4,7 @@ import com.example.GroupPayMerchant.enums.Status;
 import com.example.GroupPayMerchant.exceptions.BookingIDNotFoundException;
 import com.example.GroupPayMerchant.exceptions.InvalidStatusException;
 import com.example.GroupPayMerchant.models.BookingDetails;
+import com.example.GroupPayMerchant.models.requests.BankOrderRequest;
 import com.example.GroupPayMerchant.models.responses.BankOrderResponse;
 import com.example.GroupPayMerchant.repository.BookingRepo;
 import org.apache.coyote.BadRequestException;
@@ -17,6 +18,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -43,17 +45,17 @@ public class BookingServiceImpl implements BookingService{
         bookingDetails.setStatus(Status.PENDING);  //Set default status as IN_PROGRESS
         bookingDetails = bookingRepository.save(bookingDetails) ;
 
-        Map<String, Object> body = new HashMap<>();
+        BankOrderRequest body = new BankOrderRequest();
 
-        body.put("merchantName", merchantName);
-        body.put("merchantId", merchantId);
-        body.put("amount", bookingDetails.getAmount());
-        body.put("numberOfContributors", bookingDetails.getNumberOfContributors());
-        body.put("referenceId", bookingDetails.getId());
-
+        body.setMerchantName(merchantName);
+        body.setMerchantId(merchantId);
+        body.setAmount(bookingDetails.getAmount());
+        body.setNumberOfContributors( bookingDetails.getNumberOfContributors());
+        body.setReferenceId(bookingDetails.getId());
+        body.setExpiry(12);
         BankOrderResponse res = notifyBank(body);
 
-        bookingDetails.setExpiry(LocalDateTime.parse(res.getExpiry()));
+        bookingDetails.setExpiry(LocalDateTime.parse(res.getExpiry().substring(0,23)+"Z", DateTimeFormatter.ISO_ZONED_DATE_TIME));
         if(Objects.equals(res.getStatus(), "IN_PROGRESS"))
             bookingDetails.setStatus(Status.IN_PROGRESS);
         else
@@ -95,9 +97,9 @@ public class BookingServiceImpl implements BookingService{
         }
     }
 
-    protected BankOrderResponse notifyBank(Map<String, Object> body) {
-        Mono<BankOrderResponse> res = webClient.put().uri("/order/create").accept(MediaType.APPLICATION_JSON)
-                .bodyValue(BodyInserters.fromValue(body)).retrieve()
+    protected BankOrderResponse notifyBank(BankOrderRequest body) {
+        Mono<BankOrderResponse> res = webClient.post().uri("/order/create").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(body).retrieve()
                 .onStatus(
                         HttpStatusCode::isError,
                         response ->
