@@ -46,8 +46,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public boolean updateOrderStatus(UUID orderId, OrderStatus orderStatus) {
-        Order order = orderRepository.findById(orderId).orElseGet(() -> null);
+    public boolean updateOrderStatus(UUID orderReferenceId, OrderStatus orderStatus) {
+        Order order = orderRepository.findByReferenceId(orderReferenceId).orElseGet(() -> null);
         if(order==null){
             return false;
         }
