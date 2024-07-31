@@ -84,13 +84,12 @@ public class BookingServiceImpl implements BookingService{
     @Override
     public BookingDetails updateStatus(UUID bookingId , Status newStatus) {
 
-        BookingDetails bookingDetails = bookingRepository.getReferenceById(bookingId);
+        BookingDetails bookingDetails = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found!"));
         if (bookingDetails==null)
                 throw new BookingIDNotFoundException("Booking not found with ID:" + bookingId);
 
         try{
-            Status  status = newStatus ;
-            bookingDetails.setStatus(status);
+            bookingDetails.setStatus(newStatus);
             return bookingRepository.save(bookingDetails) ;
         } catch (IllegalArgumentException e){
             throw  new InvalidStatusException("Invalid status value: " + newStatus) ;

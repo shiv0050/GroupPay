@@ -28,3 +28,6 @@ eureka:
 
 jwt:
   secret: a21f6cf93e1b7a924b7667f1d95c907ca6335ceb4012c3e717dfe5201aad7340
+
+merchant:
+  base-url: http://127.0.0.1:8002

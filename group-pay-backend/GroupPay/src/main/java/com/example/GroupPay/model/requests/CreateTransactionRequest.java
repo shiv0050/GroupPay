@@ -9,7 +9,7 @@ import java.util.UUID;
 public class CreateTransactionRequest {
 
     @NotNull(message = "Order reference id cannot be blank")
-    private UUID orderReferenceID;
+    private UUID orderReferenceId;
 
     @NotNull(message = "Reference id cannot be blank")
     private UUID referenceId;
