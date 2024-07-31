@@ -10,8 +10,17 @@ import TabPanel from '@mui/lab/TabPanel';
 import TabList from '@mui/lab/TabList';
 import PinInput from 'react-pin-input';
 import axios from 'axios';
+import {useParams } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../App";
+import { AppContext } from "../MerchantTracking";
 
 const LoginForm = () => {
+    const {setComp}=useContext(AuthContext);
+    const nevigate=useNavigate();
+    let { orderId,paymentRefId } = useParams();
+    const {setBankUserLoggedIn}=useContext(AuthContext);
+
     const [email,setEmail]=useState('')
     const [password,setPassword]=useState('')
     const handleEmail=(event)=>{
@@ -22,9 +31,16 @@ const LoginForm = () => {
     }
     const authenticateUser=()=>{
         let request={
-            email:email,password:password
+            userName:email,password:password
         }
-        axios.post("http://localhost:8080/")
+        axios.post("http://localhost:8001/user/login",request).then(res=>{
+            if(res.data.success){
+            sessionStorage.setItem('token',res.data.userToken)
+            console.log(res.data.user);
+            setBankUserLoggedIn(res.data.user);
+            setComp("netbanking")
+            }
+        })
     }
     return (
         <Container sx={{ display: "flex",flexDirection: "column", alignItems: "center" }}>
@@ -40,6 +56,7 @@ const LoginForm = () => {
     )
 }
 const RegisterForm = () => {
+
     const [email,setEmail]=useState('')
     const [password,setPassword]=useState('')
     const handleEmail=(event)=>{
@@ -88,9 +105,20 @@ const RegisterForm = () => {
     const handleZip=(event)=>{
         setZip(event.target.value)
     }
-    const [pin,setPin]=useState('')
-    const handlePin=(event)=>{
-        setPin(event.target.value)
+    const [pin,setPin]=useState(0)
+    const handlePin=(value)=>{
+        console.log(value)
+        setPin(value)
+    }
+    const registerUser=({changeTab})=>{
+        let request={
+            firstName:firstName,lastName:lastName,password:password,phone:phoneNo,dob:dob,addressLine1:address,state:state,city:city,postalCode:zip,email:email,governmentId:id,pin:pin
+        }
+        axios.post("http://localhost:8001/user/register",request).then(res=>{
+            console.log(res.data);
+            if(res.data!=null)
+                changeTab(1)
+        })
     }
     return (
         <Container sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -105,7 +133,7 @@ const RegisterForm = () => {
             <TextField sx={{ marginTop: "10px", width: "25rem" }} id="outlined-basic" label="Email Id" variant="outlined" onChange={handleEmail}/>
             <TextField sx={{ marginTop: "10px", width: "25rem" }} id="outlined-basic" label="Identity Document Number" variant="outlined" onChange={handleId}/>
             <TextField sx={{ marginTop: "10px", width: "25rem" }} id="outlined-basic" label="Password" variant="outlined" type="password" onChange={handlePassword}/>
-            <TextField sx={{ marginTop: "10px", width: "25rem" }} id="outlined-basic" label="Confirm Password" variant="outlined" type="password" onChange={handleConfirmPassword}/>
+            <TextField sx={{ marginTop: "10px", width: "25rem" }} id="outlined-basic" label="Confirm Password" variant="outlined" type="password" error={password!=confirmPassword} onChange={handleConfirmPassword}/>
 </Box>
 <Box sx={{ flexDirection: "column", alignItems: "center" }}>
 
@@ -133,7 +161,7 @@ const RegisterForm = () => {
                     regexCriteria={/^[ A-Za-z0-9_@./#&+-]*$/}
                 />
             <Box sx={{ marginTop: "20px",display:"flex",justifyItems:"space-between"}}>
-            <Button sx={{backgroundColor: "#5A287D", color: "white", padding: "1em", borderRadius: "5em" }} size="small">Sign Up</Button>
+            <Button sx={{backgroundColor: "#5A287D", color: "white", padding: "1em", borderRadius: "5em" }} size="small" onClick={registerUser}>Sign Up</Button>
             </Box>
         </Container>
     )
@@ -162,7 +190,7 @@ const Login = () => {
                     </TabList>
                 </Box>
                 <TabPanel sx={{ backgroundColor: "white" }} value={1}><LoginForm /></TabPanel>
-                <TabPanel sx={{ backgroundColor: "white" }} value={2}><RegisterForm/></TabPanel>
+                <TabPanel sx={{ backgroundColor: "white" }} value={2}><RegisterForm changeTab={setValue}/></TabPanel>
             </TabContext>
         </Box>
     )
