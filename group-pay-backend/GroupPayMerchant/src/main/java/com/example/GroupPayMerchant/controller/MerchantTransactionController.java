@@ -1,9 +1,8 @@
 package com.example.GroupPayMerchant.controller;
 
-import com.example.GroupPayMerchant.models.MerchantTransactions;
 import com.example.GroupPayMerchant.models.requests.AddTransaction;
-import com.example.GroupPayMerchant.models.requests.LoginRequest;
 import com.example.GroupPayMerchant.models.requests.StatusUpdate;
+import com.example.GroupPayMerchant.models.responses.TransactionResponse;
 import com.example.GroupPayMerchant.service.MerchantTransactionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class MerchantTransactionController {
     }
 
     @GetMapping ("/transactions/{bookingId}")
-    public List<MerchantTransactions> getTransactions(@PathVariable UUID bookingId) {
+    public List<TransactionResponse> getTransactions(@PathVariable UUID bookingId) {
         return transactionService.getSuccessfulTransactions(bookingId);
     }
 
