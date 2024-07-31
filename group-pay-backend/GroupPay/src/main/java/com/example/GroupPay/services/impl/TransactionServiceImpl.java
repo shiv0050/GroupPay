@@ -49,7 +49,7 @@ public class TransactionServiceImpl implements TransactionService {
     public boolean createTransaction(CreateTransactionRequest transactionRequest, long userId) {
         Transaction transaction = new Transaction();
         BeanUtils.copyProperties(transactionRequest, transaction, "action");
-        Order order = orderRepository.findById(transaction.getOrderReferenceId()).orElseThrow(() -> new ForbiddenException("Order not found!"));
+        Order order = orderRepository.findByReferenceId(transaction.getOrderReferenceId()).orElseThrow(() -> new ForbiddenException("Order not found!"));
         transaction.setAmount(order.getAmount()/order.getNumberOfContributors());
         transaction.setUserId(userId);
         if(transactionRequest.isAction()){
@@ -60,29 +60,30 @@ public class TransactionServiceImpl implements TransactionService {
         transaction.setCreatedAt(Timestamp.from(Instant.now()));
 
         Map<String, Object> body = new HashMap<>();
-        body.put("referenceId", transaction.getReferenceId());
+        body.put("paymentRefId", transaction.getReferenceId());
         body.put("status", transaction.getStatus());
-        if(notifyMerchant(body))
+        if(!notifyMerchant(body))
             return false;
 
         transactionRespository.save(transaction);
 
-        checkOrderComplete(order.getId(), order.getNumberOfContributors());
+        checkOrderComplete(order.getReferenceId(), order.getNumberOfContributors());
 
         return true;
     }
 
-    protected void checkOrderComplete(UUID orderId, int numOfContributors){
-        long res = transactionRespository.checkOrderComplete(orderId);
+    protected void checkOrderComplete(UUID orderReferenceId, int numOfContributors){
+        long res = transactionRespository.checkOrderComplete(orderReferenceId);
         if(numOfContributors != res)
             return;
-        orderService.updateOrderStatus(orderId, OrderStatus.COMPLETED);
-        transactionRespository.markTransactionCompleted(orderId);
+        orderService.updateOrderStatus(orderReferenceId, OrderStatus.COMPLETED);
+        transactionRespository.markTransactionCompleted(orderReferenceId);
     }
 
     protected boolean notifyMerchant(Map<String, Object> body) {
-        webClient.put().uri("/transaction/notify").accept(MediaType.APPLICATION_JSON)
-                .bodyValue(BodyInserters.fromValue(body)).retrieve()
+        log.info("rest body - " + body);
+        String res = webClient.put().uri("/merchant-transaction/notify").contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(body).retrieve()
                 .onStatus(
                 HttpStatusCode::isError,
                 response ->
@@ -93,7 +94,8 @@ public class TransactionServiceImpl implements TransactionService {
                             case 500 -> Mono.error(new Exception("server error"));
                             default -> Mono.error(new Exception("something went wrong"));
                         }
-                ).toBodilessEntity();
+                ).bodyToMono(String.class).log().block();
+        log.info("res -> " + res);
         return true;
     }
 

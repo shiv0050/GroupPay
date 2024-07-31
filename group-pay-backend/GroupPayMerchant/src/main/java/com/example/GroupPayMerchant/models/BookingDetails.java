@@ -31,6 +31,7 @@ public class BookingDetails {
     private int productId;
 
     @Column(name = "Completion_status")
+    @Enumerated(EnumType.STRING)
     private Status status;
 
     @Column(name = "Expiry_timestamp")
