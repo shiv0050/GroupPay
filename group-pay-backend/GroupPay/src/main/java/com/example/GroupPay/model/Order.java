@@ -43,7 +43,6 @@ public class Order {
     private Timestamp expiryTime;
 
     @Column(name = "reference_id")
-    @UuidGenerator
     private UUID referenceId;
 
     public Order() {
