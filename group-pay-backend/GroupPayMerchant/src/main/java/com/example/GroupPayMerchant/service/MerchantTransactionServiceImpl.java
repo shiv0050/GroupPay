@@ -4,16 +4,14 @@ import com.example.GroupPayMerchant.enums.PaymentStatus;
 import com.example.GroupPayMerchant.enums.Status;
 import com.example.GroupPayMerchant.models.BookingDetails;
 import com.example.GroupPayMerchant.models.MerchantTransactions;
+import com.example.GroupPayMerchant.models.requests.TxnResponse;
+import com.example.GroupPayMerchant.models.responses.TransactionResponse;
 import com.example.GroupPayMerchant.repository.MerchantTransactionsRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,9 +62,9 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
     }
 
     @Override
-    public List<MerchantTransactions> getSuccessfulTransactions(UUID bookingId) {
-        List<MerchantTransactions> result = transactionsRepo.getAllTransactions(bookingId);
-        return result.stream().filter(item->item.getPaymentStatus().equals(PaymentStatus.APPROVED)).collect(Collectors.toList());
+    public List<TransactionResponse> getSuccessfulTransactions(UUID bookingId) {
+        List<TxnResponse> result = transactionsRepo.getAllTransactions(bookingId);
+        return result.stream().map(item-> new TransactionResponse(item.getAmount(), item.getCreatedAt(), item.getPaymentStatus(), item.getName(), item.getEmail())).collect(Collectors.toList());
     }
 
 
