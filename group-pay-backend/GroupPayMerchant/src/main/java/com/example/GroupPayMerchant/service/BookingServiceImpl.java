@@ -59,7 +59,7 @@ public class BookingServiceImpl implements BookingService{
         else
             bookingDetails.setStatus(Status.FAILED);
 
-        bookingRepository.save(bookingDetails);
+        bookingDetails =  bookingRepository.save(bookingDetails);
 
         return bookingDetails;
     }
