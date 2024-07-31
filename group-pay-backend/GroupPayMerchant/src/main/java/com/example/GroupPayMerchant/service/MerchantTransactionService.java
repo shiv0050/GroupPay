@@ -1,7 +1,7 @@
 package com.example.GroupPayMerchant.service;
 
 import com.example.GroupPayMerchant.enums.PaymentStatus;
-import com.example.GroupPayMerchant.models.MerchantTransactions;
+import com.example.GroupPayMerchant.models.responses.TransactionResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -13,5 +13,5 @@ public interface MerchantTransactionService {
 
     boolean updateStatus(UUID paymentRefId, PaymentStatus status);
 
-    List<MerchantTransactions> getSuccessfulTransactions(UUID bookingId);
+    List<TransactionResponse> getSuccessfulTransactions(UUID bookingId);
 }

@@ -33,4 +33,16 @@ public class MerchantTransactions {
 
     @Column(name = "Amount")
     private double amount;
+
+    public MerchantTransactions() {
+    }
+
+    public MerchantTransactions(UUID userId, UUID bookingId, LocalDateTime createdAt, UUID paymentRefId, PaymentStatus paymentStatus, double amount) {
+        this.userId = userId;
+        this.bookingId = bookingId;
+        this.createdAt = createdAt;
+        this.paymentRefId = paymentRefId;
+        this.paymentStatus = paymentStatus;
+        this.amount = amount;
+    }
 }
