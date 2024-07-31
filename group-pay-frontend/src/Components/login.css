@@ -4,41 +4,128 @@
     box-sizing: border-box;
 }
 body{
-    background-color: rgb(241, 244, 248);
+    background-color: rgb(246, 248, 250);
 
 }
-.form-container{
-   
-    background-color: #fff;
-    
-    margin: 15% 30%;
-    border: solid black 1px;
-    border-radius: 15px;
-    box-shadow: 5px 5px 20px 20px rgba(0,0,0,0);
+/* ---------- SIGN IN ---------- */
+.sign-in__wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-position: center center;
 
+    position: relative;
+  }
+  
+  .sign-in__backdrop {
+    position: absolute;
+    inset: 0;
+    background-color: rgb(246, 248, 250);
+  }
+  
+  .sign-in__wrapper form {
+    width: 24rem;
+    max-width: 90%;
+    z-index: 1;
+    animation: showSignInForm 1s;
+  }
+  
+  .sign-in__wrapper form img {
+    width: 4rem;
+  }
+  
+  @keyframes showSignInForm {
+    0%,
+    30% {
+      transform: translate(0, -150%);
+    }
+    70%,
+    90% {
+      transform: translate(0, 1rem);
+    }
+    80%,
+    100% {
+      transform: translate(0, 0);
+    }
+  }
+  .hi{color:#318be5f3;
+
+  }
+
+  .checkout-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+    background-color: #f5f5f5;
 }
-.form-container h2{
+
+.checkout-container {
+  flex:1;
+  margin: 2rem;
+    background-color: white;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 90%;
+    height: 80%;
+    max-width: 800px;
+}
+
+.header-container {
+    background-color: #0d6efd;
+    padding: 12px;
     text-align: center;
-    margin-bottom: 20px;
-    border-top-left-radius: 15px;
-    border-top-right-radius: 15px;
-    padding: 5px;
-    background-color: rgb(13,110,253);
-    color: #fff;
-    
+    color: white;
 }
-.form-container form{
-    padding: 20px;
 
+.content-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
 }
-.lform-control{
+
+.image-container {
+    width: 100%;
     margin-bottom: 20px;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    box-shadow: 2px 2px 10px rgba(0,0,0);
 }
-.form-container button{
-    padding: 5px;
-    box-shadow: 2px 2px 10px rgba(0,0,0);
+
+.image-container img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.form-container {
+    width: 100%;
+}
+
+.form-container form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between form fields */
+}
+
+.form-row {
+  display: flex;
+  gap: 10px; /* Space between the fields */
+}
+
+.form-group {
+  flex: 1; /* Allows both fields to take equal space */
+}
+
+/* Optional: Adjust the width of the fields */
+.form-group input {
+  width: 100%;
+}
+.checkout-dropdown{
+  width: 100%;
+  justify-content: center;
+  align-items: center;
 }

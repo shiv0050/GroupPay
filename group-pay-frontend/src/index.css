@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+BE+VLG:wght@100..400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+AR:wght@100..400&family=Playwrite+BE+VLG:wght@100..400&family=Playwrite+CU:wght@100..400&family=Playwrite+DK+Loopet&display=swap');
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,13 +7,28 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: rgb(246, 248, 250);
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-.ccustom-header{
-  backgroundColor:'#002f72';
-  color:'#fff';
+.profile{
+  padding: 0;
+  display: flex;
+  height: 60px;
+
+}
+
+
+.Craouselheading
+ {
+  font-family: 'Playwrite BE VLG', sans-serif;
+}
+
+.card:hover{
+
+    box-shadow:0 0 10px 5px #087cf0d0;
+
 }

@@ -1,22 +1,27 @@
-import './App.css';
-import Login from './Components/NWG/Login';
-import Netbanking from './Components/NWG/Netbanking';
-import Header from './Components/NWG/layout/Header';
-import Footer from './Components/NWG/layout/Footer';
+import React, { useState, createContext } from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MerchantHeader from './Components/MerchantHeader';
+import MerchantLogin from './Components/MerchantLogin';
+import MerchantDashboard from './Components/MerchantDashboard';
+import MerchantFooter from './Components/MerchantFooter';
+import MerchantCheckout from './Components/MerchantCheckout';
+
 export const AuthContext = createContext();
 
 function App() {
-  const [bankUserLoggedIn, setBankUserLoggedIn] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
 
   return (
-    <AuthContext.Provider value={{ bankUserLoggedIn, setBankUserLoggedIn }}>
+    <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn }}>
       <Router>
-        <Header />
+        <MerchantHeader />
         <Routes>
-          <Route path="/nwg-login" element={<Login />} />
-          <Route path="/nwg-netbanking" element={<Netbanking />} />
+          
+          <Route path="/login" element={<MerchantLogin />} />
+          <Route path="/" element={<MerchantDashboard/>} /> 
+          <Route path="/checkout" element={<MerchantCheckout/>}/>
         </Routes>
-        <Footer />
+        <MerchantFooter/>
       </Router>
     </AuthContext.Provider>
   );
