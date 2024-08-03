@@ -54,7 +54,7 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
     }
 
     protected void checkOrderComplete(UUID bookingId, int numOfContributors){
-        long res = transactionsRepo.checkOrderComplete(bookingId);
+        long res = transactionsRepo.checkOrderComplete(bookingId.toString());
         if(numOfContributors != res)
             return;
         bookingService.updateStatus(bookingId, Status.SUCCESSFUL);

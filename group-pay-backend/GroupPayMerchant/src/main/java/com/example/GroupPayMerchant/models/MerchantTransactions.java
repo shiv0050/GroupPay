@@ -4,7 +4,9 @@ package com.example.GroupPayMerchant.models;
 import com.example.GroupPayMerchant.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
 
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -14,9 +16,11 @@ import java.util.UUID;
 public class MerchantTransactions {
 
     @Column(name = "User_id", nullable = false)
+    @JdbcTypeCode(Types.VARCHAR)
     private UUID userId;
 
     @Column(name = "Booking_id", nullable = false)
+    @JdbcTypeCode(Types.VARCHAR)
     private UUID bookingId;
 
     @Column(name = "created_at", nullable = false)
@@ -25,6 +29,7 @@ public class MerchantTransactions {
     @Id
     @Column(name = "Payment_Ref_id")
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @JdbcTypeCode(Types.VARCHAR)
     private UUID paymentRefId;
 
     @Enumerated(EnumType.STRING)
