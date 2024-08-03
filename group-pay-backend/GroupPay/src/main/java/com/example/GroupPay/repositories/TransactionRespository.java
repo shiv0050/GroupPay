@@ -12,11 +12,11 @@ import java.util.UUID;
 
 public interface TransactionRespository extends JpaRepository<Transaction, UUID> {
 
-    @Query(value = "SELECT count(*) from bankofapis.transactions WHERE order_reference_id = :orderReferenceId AND status = 'APPROVED';", nativeQuery = true)
-    long checkOrderComplete(@Param("orderReferenceId") UUID orderReferenceId);
+    @Query(value = "SELECT count(*) from bank_of_apis.transactions WHERE order_reference_id = :orderReferenceId AND status = 'APPROVED';", nativeQuery = true)
+    long checkOrderComplete(@Param("orderReferenceId") String orderReferenceId);
 
     @Transactional
     @Modifying
-    @Query(value = "UPDATE bankofapis.transactions SET status = 'COMPLETED' where order_reference_id = :orderId AND status = 'APPROVED';", nativeQuery = true)
+    @Query(value = "UPDATE bank_of_apis.transactions SET status = 'COMPLETED' where order_reference_id = :orderId AND status = 'APPROVED';", nativeQuery = true)
     void markTransactionCompleted(@Param("orderId") UUID orderId);
 }

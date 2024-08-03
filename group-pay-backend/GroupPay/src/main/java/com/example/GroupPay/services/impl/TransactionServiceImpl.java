@@ -73,7 +73,8 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     protected void checkOrderComplete(UUID orderReferenceId, int numOfContributors){
-        long res = transactionRespository.checkOrderComplete(orderReferenceId);
+        long res = transactionRespository.checkOrderComplete(orderReferenceId.toString());
+        log.info("check txns -> " + res);
         if(numOfContributors != res)
             return;
         orderService.updateOrderStatus(orderReferenceId, OrderStatus.COMPLETED);
@@ -82,11 +83,12 @@ public class TransactionServiceImpl implements TransactionService {
 
     protected boolean notifyMerchant(Map<String, Object> body) {
         log.info("rest body - " + body);
-        String res = webClient.put().uri("/merchant-transaction/notify").contentType(MediaType.APPLICATION_JSON)
+        final boolean[] responseStatus = {false};
+        webClient.put().uri("/merchant-transaction/notify").contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(body).retrieve()
                 .onStatus(
                 HttpStatusCode::isError,
-                response ->
+                    response ->
                         switch (response.statusCode().value()) {
                             case 400 -> Mono.error(new BadRequestException("bad request made"));
                             case 401, 403 -> Mono.error(new Exception("auth error"));
@@ -94,8 +96,14 @@ public class TransactionServiceImpl implements TransactionService {
                             case 500 -> Mono.error(new Exception("server error"));
                             default -> Mono.error(new Exception("something went wrong"));
                         }
-                ).bodyToMono(String.class).log().block();
-        log.info("res -> " + res);
+                )
+                .onStatus(HttpStatusCode::is2xxSuccessful,
+                        response -> {
+                            log.info("res -> " + response.toString());
+                            responseStatus[0] = true;
+                            return Mono.empty();
+                        })
+                .bodyToMono(String.class).log().block();
         return true;
     }
 

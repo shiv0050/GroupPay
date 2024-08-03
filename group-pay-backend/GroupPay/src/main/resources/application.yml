@@ -2,16 +2,27 @@ spring:
   application:
     name: GroupPay
   datasource:
-#    url: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8722589?createDatabaseIfNotExist=true
-    url: jdbc:mysql://group-pay-bankofapis.e.aivencloud.com:10616/bankofapis?createDatabaseIfNotExist=true
+    url: jdbc:mysql://group-pay-bankofapis.e.aivencloud.com:10616/bank_of_apis?createDatabaseIfNotExist=true
     username: avnadmin
     password: AVNS_phRIoLjrR-0llqtiev_
-#    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
 #    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+      type:
+        descriptor:
+          sql:
+            BasicBinder: TRACE
+      orm:
+        jdbc:
+          bind: TRACE
 
 server:
   port: 8001

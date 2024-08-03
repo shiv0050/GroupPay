@@ -3,8 +3,11 @@ package com.example.GroupPayMerchant.models;
 import com.example.GroupPayMerchant.enums.Status;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UuidGenerator;
 
+import java.sql.Types;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,6 +20,7 @@ public class BookingDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Booking_id")
     @UuidGenerator
+    @JdbcTypeCode(Types.VARCHAR)
     private UUID id;
 
     @Column(name = "No_of_contributors")
@@ -26,6 +30,7 @@ public class BookingDetails {
     private double amount;
 
     @Column(name = "Initiator_id")
+    @JdbcTypeCode(Types.VARCHAR)
     private UUID initiatorId;
 
     @Column(name = "Product_id")
