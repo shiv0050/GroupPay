@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState,useContext,createContext,useEffect } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,17 +12,38 @@ import nwgLogo from "../assets/Natwest-logo.jpg"
 import Button from '@mui/material/Button';
 import axios from 'axios';
 import { AuthContext } from '../App';
+import NetBanking from './NWG/Netbanking';
 import { v4 as uuid } from 'uuid'
 import { SettingsPhoneTwoTone } from '@mui/icons-material';
 import Login from './NWG/Login';
+import {useLocation, useNavigate} from 'react-router-dom';
+import { IFrame } from './NWG/layout/IFrame';
+import Header from './NWG/layout/Header';
+import Footer from './NWG/layout/Footer';
+import { useSearchParams } from 'react-router-dom';
+
+
 export const AppContext = createContext();
 
 const Tracker = ({ amount, bookingId }) => {
+    const [searchParams] = useSearchParams();
+    const location = useLocation();
+    const navigate= useNavigate()
     const { isLoggedIn } = useContext(AuthContext);
     const [transactions, setTransactions] = useState([])
     const [show, setShow] = useState(false)
-    const [comp, setComp] = useState('')
+    const [comp, setComp] = useState({
+        page:'login',
+        amount:searchParams.get('amount'), 
+        bookingId: searchParams.get('bookingId') ,
+        expiry:searchParams.get('expiry'),
+        contributors:searchParams.get('contributors')
+})
+    const [usrId, setUsrId] = useState(null)
+    const [bookingConf, setBookingConf] = useState(false)
+
     const [transaction, setTransaction] = useState(
+        
 
         {
             status: '',
@@ -47,38 +68,57 @@ const Tracker = ({ amount, bookingId }) => {
         ...populateRows()
     ]
     const getTransactions = () => {
-        axios.get(`http://localhost:8001/merchant-user/transactions/${bookingId}`)
+        axios.get(`http://localhost:8002/merchant-transaction/transactions/${searchParams.get('bookingId')}`)
             .then((response) => {
                 let { data } = response
-                let formattedData = data.map(item => { item.firstName + " " + item.lastName, item.paymentStatus, item.createdAt, item.transactionId })
+                let formattedData=data.map(({firstName,lastname,email,paymentStatus,createdAt,transactionId}) => 
+                    ({firstName,lastname,email,paymentStatus,createdAt,transactionId})
+            )
+                
                 setTransactions(formattedData)
+                if(data.length==searchParams.get('contributors')){
+                    setBookingConf(true)
+                }
             }
             )
     }
     useEffect(() => {
+        if(searchParams.get('frombank')!=null && searchParams.get('frombank'))
+            setShow(false)
         getTransactions()
-    })
+        let usrId=sessionStorage.getItem('merchUserId')
+        if(usrId!=null)
+            setUsrId(usrId)
+    },[])
+    useEffect(() => {
+        console.log(comp)
+      
+    },[])
     const createTransaction = () => {
-        let request = { userId: isLoggedIn.userId, amount: amount, bookingId: bookingId }
-        axios.post('http://localhost:8001/merchant-user/create', request)
+        let request = { userId: usrId, amount: searchParams.get('amount'), bookingId: searchParams.get('bookingId') }
+        axios.post('http://localhost:8002/merchant-transaction/create', request)
             .then((response) => {
                 let { data } = response
                 if (data != null)
-                    setShow(true)
+                    // navigate('/nwg-login')
+                setShow(true)
+
             })
     }
     return (
         <Box>
             {
-                show && (
+                show? (
+                    <AppContext.Provider value={{ comp, setComp }}>
+                      <Header/>
+                    <IFrame>
+                            {comp.page == "login" ? <Login /> : <NetBanking />}
+                    </IFrame>
+                    <Footer/>
+                    </AppContext.Provider>
 
-                    <iframe style={{ width: "100vw", height: "100vh" }}>
-                        <AuthContext.Provider value={{ comp, setComp }}>
-                            {comp == "login" ? <Login /> : <NetBanking />}
-                        </AuthContext.Provider>
-                    </iframe>
                 )
-            }
+            :(
             <TableContainer component={Paper} sx={{}}>
                 <Typography fontSize={24} textAlign={"center"}>Track your GroupPay Order</Typography>
 
@@ -97,7 +137,7 @@ const Tracker = ({ amount, bookingId }) => {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
 
-                                <TableCell align="right">{row.user}</TableCell>
+                                <TableCell align="right">{row.firstName+" "+row.lastName+"\n"+row.email}</TableCell>
                                 <TableCell align="right">{row.paymentStatus}</TableCell>
                                 <TableCell align="right">{row.timestamp}</TableCell>
 
@@ -107,7 +147,7 @@ const Tracker = ({ amount, bookingId }) => {
                     </TableBody>
                 </Table>
 
-                <Button sx={{ backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay Now</Button>
+                <Button sx={{ margin:"5em 50%",backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay Now</Button>
 
                 <Box sx={{ display: "flex", alignItems: "center", justifySelf: "flex-start", flexDirection: "column" }}>
                     <Typography>powered by</Typography>
@@ -115,6 +155,7 @@ const Tracker = ({ amount, bookingId }) => {
                     <img src={nwgLogo} width={'100px'} />
                 </Box>
             </TableContainer>
+            )}
         </Box>
     )
 }

@@ -11,7 +11,7 @@ import {
 
 export default function MerchantFooter() {
   return (
-    <MDBFooter className='text-center text-white' style={{ backgroundColor: '#0d6efd' }}>
+    <MDBFooter className='text-center text-white' style={{ width:"100vw",display:"flex",position:"relative",bottom:'0px',backgroundColor: '#0d6efd' }}>
       <MDBContainer className='p-4'>
         <section className=''>
           <MDBRow>

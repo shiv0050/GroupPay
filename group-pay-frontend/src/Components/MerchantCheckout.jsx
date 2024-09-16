@@ -1,6 +1,6 @@
 import { Form, Button, Alert, Dropdown } from "react-bootstrap";
-import { useState,useContext } from "react";
-import { useLocation ,useNavigate} from "react-router-dom";
+import { useState,useContext,useEffect } from "react";
+import { Navigate, useLocation ,useNavigate} from "react-router-dom";
 import {v4 } from 'uuid';
 import { FaCreditCard } from "react-icons/fa";
 import { RiBankFill } from "react-icons/ri";
@@ -11,6 +11,7 @@ import { AuthContext } from "../App";
 
 function MerchantCheckout()
 {
+    const navigate=useNavigate();
     const [name, setname] = useState("")
     const [lastName, setlastName] = useState("");
     const [person, setperson] = useState(0)
@@ -19,32 +20,49 @@ function MerchantCheckout()
     const [total, settotal] = useState(0)
     const [userId, setuserId]=useState(v4())
     const [show, setshow] = useState(false)
-    const {isLoggedIn}=useContext(AuthContext)
-    const nevigate=useNavigate();
+    const [usrName,setUsrname]=useState('')
+    const [usrEmail,setUsrEmail]=useState('')
 
+    useEffect(()=>{
+      let usrName=sessionStorage.getItem('merchUserName')
+      if(usrName!=null)
+        setUsrname(usrName)
+      let usrEmail=sessionStorage.getItem('merchUserEmail')
+      if(usrEmail!=null)
+        setUsrEmail(usrEmail)
+      let usrId=sessionStorage.getItem('merchUserId')
+      if(usrId!=null)
+        setuserId(usrId)
+    },[])
     const handlePerson=(e)=>{
         const numPeople = parseInt(e.target.value, 10);
         setperson(numPeople);
         settotal(numPeople * price);
         
     }
-    const handlePayment=()=>{
-        console.log("called");
+    const handlePayment=(e)=>{
+        setPayMeth(e.target.value)
         setshow(true);
     }
     const handleSubmit=(e)=>{
         e.preventDefault();
         if(show)
-        {   axios.post("http://localhost:8002/merchant-user/newBooking",{numberOfContributors:person,amount:total,initiatorId:isLoggedIn.userId,productId:id})
-            .then((data)=>console.log(data.data))
+        {   axios.post("http://localhost:8002/merchant-user/newBooking",{numberOfContributors:person,amount:total,initiatorId:userId,productId:id},
+            {headers:{"Content-Type":"application/json"}}
+        )
+            .then((data)=>{
+                console.log(data.data)
+                navigate(`/tracker?bookingId=${data.data.id}&amount=${data.data.amount}&expiry=${data.data.expiry}&contributors=${person}`)
+})
             .catch((err)=>console.log(err));
-            nevigate("/bankingPage",{state:[userId,id,person,total]})
         }
         else{
-            nevigate("/")
+            navigate("/")
         }
-        
     };
+
+    const [payMeth,setPayMeth]=useState('')
+
     return(
         <div className="checkout-page" style={{backgroundImage:`url(${img})`,backgroundSize: 'cover',backgroundPosition: 'center'}} >
         <div className="checkout-container" >
@@ -58,11 +76,11 @@ function MerchantCheckout()
                         <div className="form-row">
                         <Form.Group className="form-group">
                             <Form.Label>First Name</Form.Label>
-                            <Form.Control type="text" value={name} placeholder="Enter your First Name" onChange={(e)=>{setname(e.target.value)}} required></Form.Control>
+                            <Form.Control type="text" value={usrName} placeholder="Enter your First Name" onChange={(e)=>{setname(e.target.value)}} required></Form.Control>
                         </Form.Group>
                         <Form.Group className="form-group">
                             <Form.Label>Last Name</Form.Label>
-                            <Form.Control type="text" value={lastName} placeholder="Enter your Last Name" onChange={(e)=>{setlastName(e.target.value)}} required></Form.Control>
+                            <Form.Control type="text" value={usrEmail} placeholder="Enter your Last Name" onChange={(e)=>{setlastName(e.target.value)}} required></Form.Control>
                         </Form.Group>
                         </div>
                         <div className="form-row">
@@ -98,7 +116,7 @@ function MerchantCheckout()
                             </Dropdown>                           
                               
                         </div>
-                        <Button variant="primary" style={{justifyContent:'center', margin:'30px 20%'}} type="submit">Proceed</Button>
+                        <Button variant="primary" style={{justifyContent:'center', margin:'30px 20%'}} type="submit" >Proceed</Button>
                         {/* Your form fields go here */}
                     </Form>
                     

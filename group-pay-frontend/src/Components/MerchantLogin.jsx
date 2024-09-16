@@ -30,13 +30,15 @@ const Login = () => {
         setShow(true);
       }
       else{
-  
+        sessionStorage.setItem('merchUserId',data.data.user.userId)
+        sessionStorage.setItem('merchUserName',data.data.user.name)
+        sessionStorage.setItem('merchUserEmail',data.data.user.email)
+
           setIsLoggedIn(data.data.user);
           nevigate("/");
       }
     })
     .catch(error => console.log(error));
-    console.log(response);
     
     setLoading(false);
   };

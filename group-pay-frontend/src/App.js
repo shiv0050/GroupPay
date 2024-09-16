@@ -5,7 +5,9 @@ import MerchantLogin from './Components/MerchantLogin';
 import MerchantDashboard from './Components/MerchantDashboard';
 import MerchantFooter from './Components/MerchantFooter';
 import MerchantCheckout from './Components/MerchantCheckout';
-
+import MerchantTracking from './Components/MerchantTracking'
+import Login from './Components/NWG/Login';
+import Netbanking from './Components/NWG/Netbanking';
 export const AuthContext = createContext();
 
 function App() {
@@ -20,6 +22,10 @@ function App() {
           <Route path="/login" element={<MerchantLogin />} />
           <Route path="/" element={<MerchantDashboard/>} /> 
           <Route path="/checkout" element={<MerchantCheckout/>}/>
+          <Route path="/tracker" element={<MerchantTracking/>}/>
+          <Route path="/nwg-login" element={<Login/>}/>
+          <Route path="/nwg-netbanking" element={<Netbanking/>}/>
+
         </Routes>
         <MerchantFooter/>
       </Router>

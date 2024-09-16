@@ -1,4 +1,4 @@
-import React,{useState,useContext} from 'react';
+import React,{useState,useContext,useEffect} from 'react';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { MDBCarousel, MDBCarouselItem, MDBCarouselCaption } from 'mdb-react-ui-kit';
 import { useNavigate } from 'react-router-dom';
@@ -10,11 +10,16 @@ import { AuthContext } from '../App';
 
 function MerchantDashboard() {
     const [price, setPrice]=useState(0);
-    const nevigate=useNavigate();
+    const [userName,setUserName]=useState('')
+    useEffect(()=>{
+      let usrName=sessionStorage.getItem('merchUserName')
+      if(usrName!=null)
+        setUserName(usrName)
+    },[])
+        const nevigate=useNavigate();
     const {isLoggedIn}=useContext(AuthContext);
     const handleBookNow=([price,place,id])=>{
-        console.log(isLoggedIn);
-        {isLoggedIn!=null?nevigate("/checkout",{state:[price,place,id]}):nevigate("/login")}
+        {userName!=''?nevigate("/checkout",{state:[price,place,id]}):nevigate("/login")}
     };
     return (
         <div style={{backgroundImage:`url(${img3})`,backgroundSize: 'cover',backgroundPosition: 'center', paddingBottom:'3rem'}}>

@@ -1,4 +1,4 @@
-import React,{useState} from "react";
+import React,{useState,useContext} from "react";
 import Button from '@mui/material/Button';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
@@ -16,10 +16,9 @@ import { AuthContext } from "../../App";
 import { AppContext } from "../MerchantTracking";
 
 const LoginForm = () => {
-    const {setComp}=useContext(AuthContext);
-    const nevigate=useNavigate();
-    let { orderId,paymentRefId } = useParams();
-    const {setBankUserLoggedIn}=useContext(AuthContext);
+    const navigate=useNavigate();
+    // let { orderId,paymentRefId } = useParams();
+    const {comp,setComp}=useContext(AppContext);
 
     const [email,setEmail]=useState('')
     const [password,setPassword]=useState('')
@@ -36,11 +35,24 @@ const LoginForm = () => {
         axios.post("http://localhost:8001/user/login",request).then(res=>{
             if(res.data.success){
             sessionStorage.setItem('token',res.data.userToken)
+            sessionStorage.setItem('bankUserId',res.data.user.id)
+            sessionStorage.setItem('bankUserName',res.data.user.firstName+" "+res.data.user.lasstName)
+            sessionStorage.setItem('bankUserEmail',res.data.user.email)
             console.log(res.data.user);
-            setBankUserLoggedIn(res.data.user);
-            setComp("netbanking")
+            // setBankUserLoggedIn(res.data.user);
+            // navigate("/nwg-netbanking")
+            setComp(prev=>{
+                return{
+                page:'netbanking',
+                amount:prev.amount,
+                bookingId:prev.bookingId,
+                expiry:prev.expiry,
+                contributors:prev.contributors
             }
+        
         })
+    }
+})
     }
     return (
         <Container sx={{ display: "flex",flexDirection: "column", alignItems: "center" }}>

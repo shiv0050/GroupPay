@@ -14,7 +14,6 @@ const Header=()=>{
                 <img src={nwgLogo} sx={{padding:"5px"}} alt="Logo" width="50"/>;
                 <Typography fontSize={22} sx={{color:"white",marginTop:"5px"}}>NatWest</Typography>
                 </Box>
-          <Button sx={{color:"white",marginRight:"5em"}}>Login</Button>
     </Box>
   );
 }
