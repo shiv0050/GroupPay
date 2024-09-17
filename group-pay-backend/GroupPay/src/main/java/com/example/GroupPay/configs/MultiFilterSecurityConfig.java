@@ -27,12 +27,11 @@ public class MultiFilterSecurityConfig {
 
     @Bean
     public SecurityFilterChain configure (HttpSecurity http) throws Exception {
-        http.cors(AbstractHttpConfigurer::disable)
+
+        http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth ->
-                    auth.requestMatchers("/user/**")
-                            .permitAll()
-                            .requestMatchers("/order/create")
+                    auth.requestMatchers("/user/**", "/order/create")
                             .permitAll()
                             .anyRequest().authenticated()
                 )
