@@ -7,6 +7,7 @@ import com.example.GroupPayMerchant.models.MerchantTransactions;
 import com.example.GroupPayMerchant.models.requests.TxnResponse;
 import com.example.GroupPayMerchant.models.responses.TransactionResponse;
 import com.example.GroupPayMerchant.repository.MerchantTransactionsRepo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class MerchantTransactionServiceImpl implements MerchantTransactionService {
 
     @Autowired
@@ -62,7 +64,8 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
     }
 
     @Override
-    public List<TransactionResponse> getSuccessfulTransactions(UUID bookingId) {
+    public List<TransactionResponse> getSuccessfulTransactions(String bookingId) {
+//        log.info("booking Id - " + bookingId);
         List<TxnResponse> result = transactionsRepo.getAllTransactions(bookingId);
         return result.stream().map(item-> new TransactionResponse(item.getAmount(), item.getCreatedAt(), item.getPaymentStatus(), item.getName(), item.getEmail())).collect(Collectors.toList());
     }

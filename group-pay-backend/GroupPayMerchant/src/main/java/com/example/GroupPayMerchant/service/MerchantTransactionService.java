@@ -13,5 +13,5 @@ public interface MerchantTransactionService {
 
     boolean updateStatus(UUID paymentRefId, PaymentStatus status);
 
-    List<TransactionResponse> getSuccessfulTransactions(UUID bookingId);
+    List<TransactionResponse> getSuccessfulTransactions(String bookingId);
 }
