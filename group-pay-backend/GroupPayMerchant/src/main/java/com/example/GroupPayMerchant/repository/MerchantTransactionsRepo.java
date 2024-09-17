@@ -16,7 +16,7 @@ public interface MerchantTransactionsRepo extends JpaRepository<MerchantTransact
     MerchantTransactions findByPaymentRefId(UUID paymentRefId);
 
     @Query(value = "Select mt.amount, mt.created_at, mt.payment_status, usr.name, usr.email from bank_of_apis.merchant_transactions mt, bank_of_apis.merchant_user usr where mt.user_id=usr.user_id AND mt.payment_status IN ('APPROVED','COMPLETED') AND mt.booking_id= :bookingId;", nativeQuery = true)
-    List<TxnResponse> getAllTransactions(@Param("bookingId") UUID bookingId);
+    List<TxnResponse> getAllTransactions(@Param("bookingId") String bookingId);
 
     @Query(value = "SELECT count(*) from bank_of_apis.merchant_transactions WHERE booking_id = :bookingId AND payment_status = 'APPROVED';", nativeQuery = true)
     long checkOrderComplete(@Param("bookingId") String bookingId);

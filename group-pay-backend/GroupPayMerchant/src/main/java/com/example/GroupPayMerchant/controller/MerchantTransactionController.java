@@ -37,7 +37,7 @@ public class MerchantTransactionController {
     }
 
     @GetMapping ("/transactions/{bookingId}")
-    public List<TransactionResponse> getTransactions(@PathVariable UUID bookingId) {
+    public List<TransactionResponse> getTransactions(@PathVariable String bookingId) {
         return transactionService.getSuccessfulTransactions(bookingId);
     }
 

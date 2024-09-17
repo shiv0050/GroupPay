@@ -17,7 +17,7 @@ import java.util.UUID;
 public class BookingDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Booking_id")
     @UuidGenerator
     @JdbcTypeCode(Types.VARCHAR)

@@ -28,8 +28,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-<<<<<<< Updated upstream
-    public String loginUser(String email, String password) {
+    public Map<String, Object> loginUser(String email, String password) {
         User user = userRepository.findByEmail(email);
 
         if (user != null) {

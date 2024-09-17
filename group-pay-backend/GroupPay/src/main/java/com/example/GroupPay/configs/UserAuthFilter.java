@@ -9,6 +9,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,13 +25,12 @@ import java.util.Collections;
 @Slf4j
 public class UserAuthFilter extends OncePerRequestFilter {
 
-    private final String HEADER_STRING = "UserToken";
+    private final String HEADER_STRING = "Authorization";
     @Autowired
     JWTUtil jwtUtil;
 
     public Authentication getAuthentication(HttpServletRequest request){
         String token = request.getHeader(HEADER_STRING);
-
         try {
             if (token != null) {
                 return new UsernamePasswordAuthenticationToken(
@@ -52,7 +52,8 @@ public class UserAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NotNull HttpServletRequest request,@NotNull HttpServletResponse response,@NotNull FilterChain filterChain) throws ServletException, IOException {
+
         Authentication authentication = getAuthentication(request);
 
         if (authentication == null) {
