@@ -35,20 +35,15 @@ const LoginForm = () => {
         axios.post("http://localhost:8001/user/login",request).then(res=>{
             if(res.data.success){
             sessionStorage.setItem('token',res.data.userToken)
-            sessionStorage.setItem('bankUserId',res.data.user.id)
-            sessionStorage.setItem('bankUserName',res.data.user.firstName+" "+res.data.user.lasstName)
+            sessionStorage.setItem('bankUserId',res.data.user.userId)
+            sessionStorage.setItem('bankUserName',res.data.user.firstName+" "+res.data.user.lastName)
             sessionStorage.setItem('bankUserEmail',res.data.user.email)
             console.log(res.data.user);
             // setBankUserLoggedIn(res.data.user);
             // navigate("/nwg-netbanking")
-            setComp(prev=>{
-                return{
-                page:'netbanking',
-                amount:prev.amount,
-                bookingId:prev.bookingId,
-                expiry:prev.expiry,
-                contributors:prev.contributors
-            }
+            setComp({
+                ...comp,
+                page:"netbanking"
         
         })
     }

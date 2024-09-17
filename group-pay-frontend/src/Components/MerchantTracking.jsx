@@ -36,6 +36,7 @@ const Tracker = ({ amount, bookingId }) => {
         page:'login',
         amount:searchParams.get('amount'), 
         bookingId: searchParams.get('bookingId') ,
+        referenceId:"",
         expiry:searchParams.get('expiry'),
         contributors:searchParams.get('contributors')
 })
@@ -71,6 +72,7 @@ const Tracker = ({ amount, bookingId }) => {
         axios.get(`http://localhost:8002/merchant-transaction/transactions/${searchParams.get('bookingId')}`)
             .then((response) => {
                 let { data } = response
+                console.log(data)
                 let formattedData=data.map(({firstName,lastname,email,paymentStatus,createdAt,transactionId}) => 
                     ({firstName,lastname,email,paymentStatus,createdAt,transactionId})
             )
@@ -83,17 +85,14 @@ const Tracker = ({ amount, bookingId }) => {
             )
     }
     useEffect(() => {
-        if(searchParams.get('frombank')!=null && searchParams.get('frombank'))
+        if(searchParams.get('frombank')=="true" && searchParams.get('frombank'))
             setShow(false)
         getTransactions()
         let usrId=sessionStorage.getItem('merchUserId')
         if(usrId!=null)
             setUsrId(usrId)
     },[])
-    useEffect(() => {
-        console.log(comp)
-      
-    },[])
+
     const createTransaction = () => {
         let request = { userId: usrId, amount: searchParams.get('amount'), bookingId: searchParams.get('bookingId') }
         axios.post('http://localhost:8002/merchant-transaction/create', request)
@@ -101,15 +100,20 @@ const Tracker = ({ amount, bookingId }) => {
                 let { data } = response
                 if (data != null)
                     // navigate('/nwg-login')
+                console.log("resp",data.data)
+                setComp({...comp,referenceId:data.data.paymentRefId})
                 setShow(true)
 
             })
     }
+    useEffect(()=>{
+        console.log(comp);
+    },[comp])
     return (
         <Box>
             {
                 show? (
-                    <AppContext.Provider value={{ comp, setComp }}>
+                    <AppContext.Provider value={{ comp, setComp,show,setShow }}>
                       <Header/>
                     <IFrame>
                             {comp.page == "login" ? <Login /> : <NetBanking />}

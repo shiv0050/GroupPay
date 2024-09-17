@@ -106,16 +106,22 @@ const Netbanking = () => {
         const createTransaction = (event) => {
 
             let req = {
-                userId: sessionStorage.getItem('bankUserId'),
-                amount: comp.amount,
-                bookingId: comp.bookingId,
+                referenceId: comp.referenceId,
+                action: true,
+                orderReferenceId: comp.bookingId,
     
             };
-
-            axios.post('http://localhost:8001/transaction/create', req, { headers: { "Authorization": `Bearer ${sessionStorage.getItem('token')}` } })
+            let token = sessionStorage.getItem('token')
+            // axios({
+            //     method:'POST',
+            //     url:"http://localhost:8001/transaction/create",
+            //     headers:{'Authorization':`Bearer${token}`
+              
+            //   }})
+            axios.post('http://localhost:8001/transaction/create', req, { headers: {Authorization: token} })
                 .then(res => {
-                    if(res.data!=null){
-                    setPayConf(true)
+                    if(res.data.success){
+                        console.log(res.data)
                     navigate(`/tracker?bookingId=${comp.bookingId}&amount=${comp.amount}&expiry=${comp.expiry}&contributors=${comp.contributors}&frombank=true`)
                 }
                 })
