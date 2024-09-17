@@ -11,9 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@CrossOrigin(origins = "*")
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
-
 @RequestMapping("/user")
 public class UserController {
 
@@ -23,20 +22,18 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest body){
         return ResponseEntity.ok(getMapResponse(userService.login(body.getUserName(), body.getPassword())));
+
     }
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody AddUserRequest body){
-        Map<String, Object> res = userService.register(body);
-        res.put("success", true);
-        return ResponseEntity.ok(res);
+        return ResponseEntity.ok(getMapResponse(userService.register(body)));
     }
 
-    private Map<String, Object> getMapResponse(String token){
+    private Map<String, Object> getMapResponse(Map<String, Object> body){
         Map<String, Object> res = new HashMap<>();
         res.put("success", true);
-        res.put("userToken", token);
-
+        res.putAll(body);
         return res;
     }
 

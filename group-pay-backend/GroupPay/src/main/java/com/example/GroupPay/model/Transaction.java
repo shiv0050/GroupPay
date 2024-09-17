@@ -3,17 +3,26 @@ package com.example.GroupPay.model;
 import com.example.GroupPay.enums.TransactionStatus;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.util.UUID;
 
 @Data
 @Entity
+@Getter
+@Setter
 @Table(name = "transactions")
 public class Transaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id", nullable = false)
+    @GeneratedValue(generator = "UUID")
+    @UuidGenerator
+    @JdbcTypeCode(Types.VARCHAR)
     private UUID id;
 
     @Column(name = "created_at", nullable = false)
@@ -22,8 +31,13 @@ public class Transaction {
     @Column(name = "user_id", nullable = false)
     private long userId;
 
-    @Column(name = "order_id", nullable = false)
-    private long orderId;
+    @Column(name = "order_reference_id", nullable = false)
+    @JdbcTypeCode(Types.VARCHAR)
+    private UUID orderReferenceId;
+
+    @Column(name = "reference_id", nullable = false, unique = true)
+    @JdbcTypeCode(Types.VARCHAR)
+    private UUID referenceId;
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -32,60 +46,15 @@ public class Transaction {
     @Column(name = "amount", nullable = false)
     private double amount;
 
-    public Transaction(UUID id, Timestamp createdAt, long userId, long orderId, TransactionStatus status, double amount) {
+    public Transaction() {
+    }
+    public Transaction(UUID id, Timestamp createdAt, long userId, UUID orderId, UUID txnReferenceId, TransactionStatus status, double amount) {
         this.id = id;
         this.createdAt = createdAt;
         this.userId = userId;
-        this.orderId = orderId;
+        this.orderReferenceId = orderId;
+        this.referenceId = txnReferenceId;
         this.status = status;
-        this.amount = amount;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Timestamp getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Timestamp createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(long userId) {
-        this.userId = userId;
-    }
-
-    public long getOrderId() {
-        return orderId;
-    }
-
-    public void setOrderId(long orderId) {
-        this.orderId = orderId;
-    }
-
-    public TransactionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TransactionStatus status) {
-        this.status = status;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
         this.amount = amount;
     }
 }

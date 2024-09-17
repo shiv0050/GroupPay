@@ -2,7 +2,10 @@ package com.example.GroupPay.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.UuidGenerator;
 
+import java.sql.Types;
 import java.util.UUID;
 
 @Data
@@ -10,8 +13,10 @@ import java.util.UUID;
 @Table(name = "accounts")
 public class Account {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(generator = "uuid")
     @Column(name = "id")
+    @UuidGenerator
+    @JdbcTypeCode(Types.VARCHAR)
     private UUID id;
 
     @Column(name = "user_id", nullable = false)

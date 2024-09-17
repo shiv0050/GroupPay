@@ -1,5 +1,6 @@
 package com.example.GroupPayMerchant.service;
 
+import com.example.GroupPayMerchant.models.User;
 import com.example.GroupPayMerchant.models.requests.AddUserRequest;
 import com.example.GroupPayMerchant.models.responses.AddUserResponse;
 import com.example.GroupPayMerchant.exceptions.InvalidCredentialException;
@@ -13,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -28,12 +28,15 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public String loginUser(String email, String password) {
-        com.example.GroupPayMerchant.models.User user = userRepository.findByEmail(email);
+    public Map<String, Object> loginUser(String email, String password) {
+        User user = userRepository.findByEmail(email);
 
         if (user != null) {
             if (passwordEncoder.matches(password, user.getPassword())) {
-                return getToken("" + user.getUserId());
+                Map<String, Object> res = new HashMap<>();
+                res.put("userToken", getToken("" + user.getUserId()));
+                res.put("user", user);
+                return res;
             }
 
             throw new InvalidCredentialException("Invalid Password");
@@ -44,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Map<String, Object> signUp(AddUserRequest userRequest) {
-        com.example.GroupPayMerchant.models.User user = new com.example.GroupPayMerchant.models.User();
+        User user = new User();
         AddUserResponse newUser = new AddUserResponse();
         BeanUtils.copyProperties(userRequest, user, "password");
         String encodedPass = passwordEncoder.encode(userRequest.getPassword());

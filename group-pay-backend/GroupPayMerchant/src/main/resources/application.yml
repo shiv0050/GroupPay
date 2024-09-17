@@ -1,19 +1,38 @@
 spring:
   application:
-    name: GroupPay
+    name: GroupPayMerchant
   datasource:
-    url: jdbc:mysql://sql8.freesqldatabase.com:3306/sql8722589?createDatabaseIfNotExist=true
-    username: sql8722589
-    password: MlYcPwAPTp
-#    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://group-pay-bankofapis.e.aivencloud.com:10616/bank_of_apis?createDatabaseIfNotExist=true
+    username: avnadmin
+    password: AVNS_phRIoLjrR-0llqtiev_
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-#    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: DEBUG
+      type:
+        descriptor:
+          sql:
+            BasicBinder: TRACE
+      orm:
+        jdbc:
+          bind: TRACE
 
 server:
   port: 8002
 
 jwt:
   secret: 8Zz5tw0Ionm3XPZZfN0NOml3z9FMfmpgXwovR9fp6ryDIodyudkhhhhbehhiuehuigvfxdt776e54
+
+merchant:
+  details:
+    name: Boooking.com
+    id: NWB001
+
+bank:
+  base-url: http://127.0.0.1:8001
