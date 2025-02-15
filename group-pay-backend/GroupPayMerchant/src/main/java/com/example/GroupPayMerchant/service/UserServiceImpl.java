@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public Map<String, Object> loginUser(String email, String password) {
+    public Map<String, Object> loginUser(String email, String password) throws RuntimeException {
         User user = userRepository.findByEmail(email);
 
         if (user != null) {

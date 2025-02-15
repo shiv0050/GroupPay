@@ -23,9 +23,16 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequest body) {
-        Map<String, Object> res = userService.loginUser(body.getEmail(), body.getPassword());
-        res.put("success", true);
-        return ResponseEntity.ok(res);
+        try{
+            Map<String, Object> res = userService.loginUser(body.getEmail(), body.getPassword());
+            res.put("success", true);
+            return ResponseEntity.ok(res);
+        } catch (RuntimeException e){
+            Map<String, Object> res = new HashMap<>();
+            res.put("success", false);
+            res.put("error", "Invalid username or password");
+            return ResponseEntity.badRequest().body(res);
+        }
     }
 
     @PostMapping("/register")
