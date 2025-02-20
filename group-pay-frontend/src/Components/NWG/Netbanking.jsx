@@ -26,19 +26,12 @@ import Login from "./Login";
 import { IFrame } from './layout/IFrame'
 import { useNavigate } from "react-router-dom";
 import { FaHandsAslInterpreting } from "react-icons/fa6";
+import { TokenTwoTone } from "@mui/icons-material";
 
 
 
-const getAccounts = (token) => {
-    axios.get('', { headers: { "Authorization": `Bearer ${token}` } })
-        .then(res => {
-            return res.data
-        })
-        .catch(err => {
-            throw err
-        })
-}
 const Netbanking = () => {
+    
     const [accounts, setAccounts] = useState([{
         accountNumber: uuid(),
         balance: 500
@@ -51,23 +44,18 @@ const Netbanking = () => {
         balance: 200
     }])
     const [accountSelected, setAccountSelected] = useState({});
-    const [transaction, setTransaction] = useState({
-
-    })
+    const [transaction, setTransaction] = useState({})
+   
     useEffect(() => {
-        // let token = JSON.parse(sessionStorage.getItem('token'));
-        // console.log(token);
-        // const bankAccounts=getAccounts(token)
-        // setAccounts(bankAccounts)
+        let token = JSON.parse(sessionStorage.getItem('bank_token'));
+        console.log("bank token",token);
     }, [])
     const AccountCard = () => {
-        console.log(accounts)
-
         return (
             accounts.map(account => {
                 return (
                     <div onClick={() => setAccountSelected(account)}>
-                        <Card  sx={{ marginBottom:"2em",width: "25em", border: '1px solid #5A287D', borderBottomWidth: 5 }} >
+                        <Card sx={{ marginBottom: "2em", width: "25em", border: '1px solid #5A287D', borderBottomWidth: 5 }} >
                             <CardContent sx={{ display: 'flex' }}>
                                 <img src={nwgLogo} alt="Logo" width="50px" />;
                                 <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -99,50 +87,46 @@ const Netbanking = () => {
         const [usrId, setUsrId] = useState(null)
         const [payConf, setPayConf] = useState(false)
 
-       
 
-        const { comp, setComp } = useContext(AppContext);
+
+        const { comp, setComp ,setShow} = useContext(AppContext);
 
         const createTransaction = (event) => {
 
             let req = {
-                referenceId: comp.referenceId,
+                referenceId: comp.paymentRefId,
                 action: true,
                 orderReferenceId: comp.bookingId,
-    
+
             };
             let token = sessionStorage.getItem('token')
-            // axios({
-            //     method:'POST',
-            //     url:"http://localhost:8001/transaction/create",
-            //     headers:{'Authorization':`Bearer${token}`
-              
-            //   }})
-            axios.post('http://localhost:8001/transaction/create', req, { headers: {Authorization: token} })
+         
+            axios.post('http://localhost:8001/transaction/create', req, { headers: { Authorization: token } })
                 .then(res => {
-                    if(res.data.success){
+                    if (res.data.success) {
                         console.log(res.data)
-                    navigate(`/tracker?bookingId=${comp.bookingId}&amount=${comp.amount}&expiry=${comp.expiry}&contributors=${comp.contributors}&frombank=true`)
-                }
+                        // navigate(`/tracker?bookingId=${comp.bookingId}&amount=${comp.amount}&expiry=${comp.expiry}&contributors=${comp.contributors}&frombank=true`)
+                    setShow(true);
+                    }
                 })
-                    
+
                 .catch(err => {
                     throw err
                 })
         };
 
         console.log(comp);
-        const [pin,setPin]=useState(null)
-const handlePin=(value)=>{
-setPin(value)
-}
+        const [pin, setPin] = useState(null)
+        const handlePin = (value) => {
+            setPin(value)
+        }
         if
             (payConf) {
-                return (
-                    <Alert icon={<CheckIcon fontSize="18" />} severity="success">
-                        Your payment has been approved.
-                    </Alert>
-                )
+            return (
+                <Alert icon={<CheckIcon fontSize="18" />} severity="success">
+                    Your payment has been approved.
+                </Alert>
+            )
         }
         else {
             return (
@@ -202,7 +186,7 @@ setPin(value)
                                 initialValue=""
                                 secret
                                 secretDelay={100}
-                                onChange={(value, index) =>  handlePin(value)}
+                                onChange={(value, index) => handlePin(value)}
                                 type="numeric"
                                 inputMode="number"
                                 style={{ padding: '10px' }}
@@ -216,30 +200,30 @@ setPin(value)
                             <Typography sx={{ fontSize: 14 }} color="#894570" gutterBottom>
                                 Back
                             </Typography>
-                            <Button sx={{ backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Confirm</Button>
+                            <Button sx={{ backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Authorize</Button>
 
                         </Box>
                     </Box>
                 </Container>
             )
         }
-    
-}
 
-return (
-    <Grid justifyContent="center" container spacing={1}>
-        <Grid item xs={5}>
-            <Box>
-                <AccountCard />
-            </Box>
-        </Grid>
-        <Grid item xs={5}>
-            <Box>
+    }
 
-                <PaymentCard />
-            </Box>
+    return (
+        <Grid justifyContent="center" container spacing={1}>
+            <Grid item xs={5}>
+                <Box>
+                    <AccountCard />
+                </Box>
+            </Grid>
+            <Grid item xs={5}>
+                <Box>
+
+                    <PaymentCard />
+                </Box>
+            </Grid>
         </Grid>
-    </Grid>
-);
+    );
 }
 export default Netbanking;

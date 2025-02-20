@@ -1,4 +1,4 @@
-import React, { useState,useContext,createContext,useEffect } from 'react'
+import React, { useState, useContext, createContext, useEffect, useMemo } from 'react'
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -16,151 +16,128 @@ import NetBanking from './NWG/Netbanking';
 import { v4 as uuid } from 'uuid'
 import { SettingsPhoneTwoTone } from '@mui/icons-material';
 import Login from './NWG/Login';
-import {useLocation, useNavigate} from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { IFrame } from './NWG/layout/IFrame';
 import Header from './NWG/layout/Header';
 import Footer from './NWG/layout/Footer';
 import { useSearchParams } from 'react-router-dom';
+import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
 
 
 export const AppContext = createContext();
 
-const Tracker = ({ amount, bookingId }) => {
-    const [searchParams] = useSearchParams();
-    const location = useLocation();
-    const navigate= useNavigate()
+const Tracker = ({ amount, bookingId, contributors }) => {
+
     const { isLoggedIn } = useContext(AuthContext);
     const [transactions, setTransactions] = useState([])
+    const colDefs = useMemo(() => [
+        { name: "Name", field: "name" },
+        { name: "Email", field: "email" },
+        { name: "Status", field: "paymentStatus" },
+        { name: "Timestamp", field: "createdAt" }
+    ]);
     const [show, setShow] = useState(false)
+    const [showAlert, setShowAlert] = useState(false)
+
     const [comp, setComp] = useState({
-        page:'login',
-        amount:searchParams.get('amount'), 
-        bookingId: searchParams.get('bookingId') ,
-        referenceId:"",
-        expiry:searchParams.get('expiry'),
-        contributors:searchParams.get('contributors')
-})
+        page: 'login',
+        amount: amount,
+        bookingId: bookingId,
+        paymentRefId: "",
+        expiry: "",
+        contributors: contributors
+    })
     const [usrId, setUsrId] = useState(null)
-    const [bookingConf, setBookingConf] = useState(false)
 
-    const [transaction, setTransaction] = useState(
-        
 
-        {
-            status: '',
-            transactionId: '',
-            timestamp: ''
 
-        }
-    )
 
-    const populateRows = () => {
-        let rows = transactions.map(transaction => {
-            return {
-                user: transaction.firstName + " " + transaction.lastName + "\n" + transaction.email,
-                paymentStatus: transaction.paymentStatus,
-                timestamp: transaction.createdAt,
-                id: transaction.transactionId
-            }
-        })
-        return rows;
-    }
-    const rows = [
-        ...populateRows()
-    ]
+
     const getTransactions = () => {
-        axios.get(`http://localhost:8002/merchant-transaction/transactions/${searchParams.get('bookingId')}`)
+        axios.get(`http://localhost:8002/merchant-transaction/transactions/${bookingId}}`)
             .then((response) => {
                 let { data } = response
-                console.log(data)
-                let formattedData=data.map(({firstName,lastname,email,paymentStatus,createdAt,transactionId}) => 
-                    ({firstName,lastname,email,paymentStatus,createdAt,transactionId})
+                console.log("m_txnlist", data)
+                setTransactions(data)
+            }
             )
-                
-                setTransactions(formattedData)
-                if(data.length==searchParams.get('contributors')){
-                    setBookingConf(true)
-                }
+    }
+    const checkBookingComplete = () => {
+        axios.get(`http://localhost:8002/merchant-transanction/${bookingId}/status}`)
+            .then((response) => {
+                let { data } = response
+                console.log("booking status", data)
+                setShowAlert(true)
+            
             }
             )
     }
     useEffect(() => {
-        if(searchParams.get('frombank')=="true" && searchParams.get('frombank'))
-            setShow(false)
+        setShow(false)
         getTransactions()
-        let usrId=sessionStorage.getItem('merchUserId')
-        if(usrId!=null)
+        checkBookingComplete()
+        let usrId = sessionStorage.getItem('merchUserId')
+        if (usrId != null)
             setUsrId(usrId)
-    },[])
+    }, [show])
 
     const createTransaction = () => {
-        let request = { userId: usrId, amount: searchParams.get('amount'), bookingId: searchParams.get('bookingId') }
+        let request = { userId: usrId, amount: amount / contributors, bookingId: bookingId }
         axios.post('http://localhost:8002/merchant-transaction/create', request)
             .then((response) => {
                 let { data } = response
                 if (data != null)
-                    // navigate('/nwg-login')
-                console.log("resp",data.data)
-                setComp({...comp,referenceId:data.data.paymentRefId})
+                    console.log("Merchant txn Created", data)
+
+                setComp({ ...comp, paymentRefId: data.paymentRefId })
                 setShow(true)
 
             })
     }
-    useEffect(()=>{
+    useEffect(() => {
         console.log(comp);
-    },[comp])
+    }, [comp])
     return (
-        <Box>
-            {
-                show? (
-                    <AppContext.Provider value={{ comp, setComp,show,setShow }}>
-                      <Header/>
-                    <IFrame>
-                            {comp.page == "login" ? <Login /> : <NetBanking />}
-                    </IFrame>
-                    <Footer/>
-                    </AppContext.Provider>
+        <>
+            // Data Grid will fill the size of the parent container
 
-                )
-            :(
-            <TableContainer component={Paper} sx={{}}>
-                <Typography fontSize={24} textAlign={"center"}>Track your GroupPay Order</Typography>
+            <Button sx={{ margin: "5em 50%", backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay your share</Button>
 
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>User Name/Email</TableCell>
-                            <TableCell align="right">Payment Status</TableCell>
-                            <TableCell align="right">Timestamp</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {rows.map((row) => (
-                            <TableRow
-                                key={row.id}
-                                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                            >
+            <Box>
+                {
+                    show ? (
+                        <AppContext.Provider value={{ comp, setComp, show, setShow }}>
+                            <Header />
+                            <IFrame>
+                                {comp.page == "login" ? <Login /> : <NetBanking />}
+                            </IFrame>
+                            <Footer />
+                        </AppContext.Provider>
 
-                                <TableCell align="right">{row.firstName+" "+row.lastName+"\n"+row.email}</TableCell>
-                                <TableCell align="right">{row.paymentStatus}</TableCell>
-                                <TableCell align="right">{row.timestamp}</TableCell>
+                    )
+                        :
 
-                            </TableRow>
-                        ))}
+                        showAlert ? (
+                            <div style={{ height: 500 }}>booking Complete</div>
 
-                    </TableBody>
-                </Table>
+                        ) : (<div style={{ height: 500 }}>
+                            <AgGridReact
+                                rowData={transactions}
+                                columnDefs={colDefs}
+                            />
 
-                <Button sx={{ margin:"5em 50%",backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay Now</Button>
+                            <Button sx={{ margin: "5em 50%", backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay Now</Button>
 
-                <Box sx={{ display: "flex", alignItems: "center", justifySelf: "flex-start", flexDirection: "column" }}>
-                    <Typography>powered by</Typography>
+                            <Box sx={{ display: "flex", alignItems: "center", justifySelf: "flex-start", flexDirection: "column" }}>
+                                <Typography>powered by</Typography>
 
-                    <img src={nwgLogo} width={'100px'} />
-                </Box>
-            </TableContainer>
-            )}
-        </Box>
+                                <img src={nwgLogo} width={'100px'} />
+                            </Box>
+
+                        </div>
+                        )}
+            </Box>
+        </>
     )
 }
 export default Tracker;  //export the component
