@@ -1,5 +1,6 @@
 package com.example.GroupPay.services;
 
+import com.example.GroupPay.model.Transaction;
 import com.example.GroupPay.model.requests.CreateTransactionRequest;
 
 public interface TransactionService {

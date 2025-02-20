@@ -2,6 +2,7 @@ package com.example.GroupPayMerchant.controller;
 
 import com.example.GroupPayMerchant.enums.Status;
 import com.example.GroupPayMerchant.models.BookingDetails;
+import com.example.GroupPayMerchant.models.requests.BookingRequest;
 import com.example.GroupPayMerchant.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,15 +13,15 @@ import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/merchant-user")
+@RequestMapping("/merchant-booking")
 public class BookingController {
 
     @Autowired
     private BookingService bookingService ;
 
-    @PostMapping("/newBooking")
-    public ResponseEntity<BookingDetails> createNewBooking(@RequestBody BookingDetails newBookingDetails){
-    BookingDetails newBooking = bookingService.createNewBooking(newBookingDetails) ;
+    @PostMapping("/create")
+    public ResponseEntity<BookingDetails> createNewBooking(@RequestBody BookingRequest request){
+    BookingDetails newBooking = bookingService.createNewBooking(request) ;
         return new ResponseEntity<>(newBooking,HttpStatus.CREATED) ;
     }
 
@@ -30,4 +31,11 @@ public class BookingController {
             BookingDetails updatedBooking = bookingService.updateStatus(id, status) ;
             return new ResponseEntity<>(updatedBooking , HttpStatus.OK) ;
     }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BookingDetails> getBookingDetails(@PathVariable UUID id){
+        BookingDetails bookingData = bookingService.getBookingById(id) ;
+        return new ResponseEntity<>(bookingData , HttpStatus.OK) ;
+    }
+
 }

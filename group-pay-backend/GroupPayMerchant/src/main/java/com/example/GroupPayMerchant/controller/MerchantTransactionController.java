@@ -1,5 +1,6 @@
 package com.example.GroupPayMerchant.controller;
 
+import com.example.GroupPayMerchant.models.BookingDetails;
 import com.example.GroupPayMerchant.models.requests.AddTransaction;
 import com.example.GroupPayMerchant.models.requests.StatusUpdate;
 import com.example.GroupPayMerchant.models.responses.TransactionResponse;
@@ -11,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @CrossOrigin(origins = "*")
@@ -22,23 +22,27 @@ public class MerchantTransactionController {
     MerchantTransactionService transactionService;
 
     @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> createTransaction(@Valid @RequestBody AddTransaction body) {
-        Map<String, Object> res = transactionService.createTransaction(body.getUserId(), body.getAmount(), body.getBookingId());
-        res.put("success", true);
+    public ResponseEntity<TransactionResponse> createTransaction(@Valid @RequestBody AddTransaction body) {
+        TransactionResponse res = transactionService.createTransaction(body.getUserId(), body.getAmount(), body.getBookingId());
         return ResponseEntity.ok(res);
     }
 
     @PutMapping("/notify")
-    public ResponseEntity<HttpStatus> updateStatus(@Valid @RequestBody StatusUpdate body) {
-        if(transactionService.updateStatus(body.getPaymentRefId(),body.getStatus())) {
-        return new ResponseEntity(HttpStatus.OK);
-        }
-        return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    public ResponseEntity<Boolean> updateStatus(@Valid @RequestBody StatusUpdate body) {
+        return ResponseEntity.ok(transactionService.updateStatus(body.getPaymentRefId(),body.getStatus()));
 
+    }
+    @GetMapping("/{bookingId}/status")
+    public Boolean checkCompletionStatus(@PathVariable UUID bookingId){
+        return transactionService.checkCompletionStatus(bookingId) ;
+    }
     @GetMapping ("/transactions/{bookingId}")
-    public List<TransactionResponse> getTransactions(@PathVariable String bookingId) {
+    public List<TransactionResponse> getTransactions(@PathVariable UUID bookingId) {
         return transactionService.getSuccessfulTransactions(bookingId);
+    }
+    @GetMapping ("/transactions/{payRefId}")
+    public List<TransactionResponse> getTransactionStatus(@PathVariable UUID payRefId) {
+        return transactionService.getSuccessfulTransactions(payRefId);
     }
 
 }

@@ -15,7 +15,4 @@ public class AddUserRequest {
     @NotBlank(message = "Password cannot be empty")
     private String password;
 
-    public String getPassword() {
-        return password;
-    }
 }

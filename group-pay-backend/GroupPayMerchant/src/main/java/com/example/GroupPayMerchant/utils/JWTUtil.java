@@ -57,12 +57,9 @@ public class JWTUtil implements Serializable, EnvironmentAware {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();
     }
-
-//    private Key getSignInKey() {
-//        byte[] keyBytes = Decoders.BASE64.decode(secret);
-//        return Keys.hmacShaKeyFor(keyBytes);
-//    }
-
+    public String getSubFromJWT(String token){
+        return getClaimsFromToken(token).getSubject();
+    }
     @Override
     public void setEnvironment(Environment environment) {
         this.secret = environment.getProperty("jwt.secret");

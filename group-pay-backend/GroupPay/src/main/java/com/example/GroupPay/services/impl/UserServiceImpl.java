@@ -77,7 +77,7 @@ public class UserServiceImpl implements UserService {
         return res;
     }
 
-    public String getToken(String subject) {
+    private String getToken(String subject) {
         return jwtUtil.generateToken(subject);
     }
 }
