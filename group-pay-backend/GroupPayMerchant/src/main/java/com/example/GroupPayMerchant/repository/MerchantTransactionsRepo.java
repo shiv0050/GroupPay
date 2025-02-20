@@ -14,6 +14,7 @@ import java.util.UUID;
 public interface MerchantTransactionsRepo extends JpaRepository<MerchantTransactions , UUID> {
 
     MerchantTransactions findByPaymentRefId(UUID paymentRefId);
+    List<MerchantTransactions> findAllByPaymentRefId(UUID paymentRefId);
 
     @Query(value = "Select mt.amount, mt.created_at, mt.payment_status, usr.name, usr.email from bank_of_apis.merchant_transactions mt, bank_of_apis.merchant_user usr where mt.user_id=usr.user_id AND mt.payment_status IN ('APPROVED','COMPLETED') AND mt.booking_id= :bookingId;", nativeQuery = true)
     List<TxnResponse> getAllTransactions(@Param("bookingId") String bookingId);

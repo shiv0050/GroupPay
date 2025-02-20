@@ -1,12 +1,12 @@
 package com.example.GroupPayMerchant.models.requests;
 
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.UUID;
 
-@Setter
-@Getter
+@Data
 public class BankOrderRequest {
     private String merchantId;
     private String merchantName;

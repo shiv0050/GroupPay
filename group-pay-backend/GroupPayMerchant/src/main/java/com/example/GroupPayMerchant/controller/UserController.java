@@ -3,9 +3,11 @@ package com.example.GroupPayMerchant.controller;
 
 import com.example.GroupPayMerchant.models.requests.AddUserRequest;
 import com.example.GroupPayMerchant.models.requests.LoginRequest;
+import com.example.GroupPayMerchant.models.responses.UserResponse;
 import com.example.GroupPayMerchant.service.UserService;
 
 import jakarta.validation.Valid;
+import org.apache.tomcat.util.json.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +18,7 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/merchant-user")
-public class LoginController {
+public class UserController {
 
     @Autowired
     UserService userService;
@@ -37,7 +39,7 @@ public class LoginController {
 
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> register(@Valid @RequestBody AddUserRequest body) {
-        Map<String, Object> res = userService.signUp(body);
+        Map<String, Object> res = userService.register(body);
         res.put("success", true);
         return ResponseEntity.ok(res);
     }
@@ -49,6 +51,12 @@ public class LoginController {
 
         return res;
     }
+
+    @GetMapping("/userInfo")
+    public UserResponse getUser(@RequestHeader("Authorization") String header) throws ParseException {
+        return userService.getUserDetails(header);
+    }
+
 }
 
 

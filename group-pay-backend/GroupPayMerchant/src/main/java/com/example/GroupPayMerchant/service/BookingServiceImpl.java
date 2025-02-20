@@ -5,9 +5,11 @@ import com.example.GroupPayMerchant.exceptions.BookingIDNotFoundException;
 import com.example.GroupPayMerchant.exceptions.InvalidStatusException;
 import com.example.GroupPayMerchant.models.BookingDetails;
 import com.example.GroupPayMerchant.models.requests.BankOrderRequest;
+import com.example.GroupPayMerchant.models.requests.BookingRequest;
 import com.example.GroupPayMerchant.models.responses.BankOrderResponse;
 import com.example.GroupPayMerchant.repository.BookingRepo;
 import org.apache.coyote.BadRequestException;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
@@ -31,6 +33,8 @@ public class BookingServiceImpl implements BookingService{
     @Autowired
     private WebClient webClient;
     @Autowired
+    ModelMapper modelMapper;
+    @Autowired
     BookingRepo bookingRepository ;
 
     @Value("${merchant.details.name}")
@@ -40,30 +44,27 @@ public class BookingServiceImpl implements BookingService{
     private String merchantId;
 
     @Override
-    public BookingDetails createNewBooking(BookingDetails bookingDetails) {
+    public BookingDetails createNewBooking(BookingRequest bookingRequest) {
+        bookingRequest.setStatus(Status.PENDING);  //Set default status as IN_PROGRESS
+        BookingDetails newBookingDetails = bookingRepository.save(modelMapper.map(bookingRequest,BookingDetails.class)) ;
 
-        bookingDetails.setStatus(Status.PENDING);  //Set default status as IN_PROGRESS
-        bookingDetails = bookingRepository.save(bookingDetails) ;
+        BankOrderRequest bankOrderRequest = new BankOrderRequest();
+        bankOrderRequest.setMerchantName(merchantName);
+        bankOrderRequest.setMerchantId(merchantId);
+        bankOrderRequest.setAmount(newBookingDetails.getAmount());
+        bankOrderRequest.setNumberOfContributors(newBookingDetails.getNumberOfContributors());
+        bankOrderRequest.setReferenceId(newBookingDetails.getId());
+        bankOrderRequest.setExpiry(12);
+        BankOrderResponse bankOrderResponse = notifyBank(bankOrderRequest);
 
-        BankOrderRequest body = new BankOrderRequest();
-
-        body.setMerchantName(merchantName);
-        body.setMerchantId(merchantId);
-        body.setAmount(bookingDetails.getAmount());
-        body.setNumberOfContributors( bookingDetails.getNumberOfContributors());
-        body.setReferenceId(bookingDetails.getId());
-        body.setExpiry(12);
-        BankOrderResponse res = notifyBank(body);
-
-        bookingDetails.setExpiry(LocalDateTime.parse(res.getExpiry().substring(0,23)+"Z", DateTimeFormatter.ISO_ZONED_DATE_TIME));
-        if(Objects.equals(res.getStatus(), "IN_PROGRESS"))
-            bookingDetails.setStatus(Status.IN_PROGRESS);
+        if(Objects.equals(bankOrderResponse.getStatus(), "IN_PROGRESS")) {
+            newBookingDetails.setStatus(Status.IN_PROGRESS);
+            newBookingDetails.setExpiry(LocalDateTime.parse(bankOrderResponse.getExpiry().substring(0, 23) + "Z", DateTimeFormatter.ISO_ZONED_DATE_TIME));
+        }
         else
-            bookingDetails.setStatus(Status.FAILED);
+            newBookingDetails.setStatus(Status.FAILED);
 
-        bookingDetails =  bookingRepository.save(bookingDetails);
-
-        return bookingDetails;
+        return bookingRepository.save(newBookingDetails);
     }
 
     @Override
@@ -85,20 +86,21 @@ public class BookingServiceImpl implements BookingService{
     public BookingDetails updateStatus(UUID bookingId , Status newStatus) {
 
         BookingDetails bookingDetails = bookingRepository.findById(bookingId).orElseThrow(() -> new RuntimeException("Booking not found!"));
-        if (bookingDetails==null)
-                throw new BookingIDNotFoundException("Booking not found with ID:" + bookingId);
+        if (bookingDetails == null)
+            throw new BookingIDNotFoundException("Booking not found with ID:" + bookingId);
 
-        try{
+        try {
             bookingDetails.setStatus(newStatus);
-            return bookingRepository.save(bookingDetails) ;
-        } catch (IllegalArgumentException e){
-            throw  new InvalidStatusException("Invalid status value: " + newStatus) ;
+            return bookingRepository.save(bookingDetails);
+        } catch (IllegalArgumentException e) {
+            throw new InvalidStatusException("Invalid status value: " + newStatus);
         }
     }
 
-    protected BankOrderResponse notifyBank(BankOrderRequest body) {
-        Mono<BankOrderResponse> res = webClient.post().uri("/order/create").contentType(MediaType.APPLICATION_JSON)
-                .bodyValue(body).retrieve()
+    protected BankOrderResponse notifyBank(BankOrderRequest bankOrderRequest) {
+        Mono<BankOrderResponse> res = webClient.post().uri("/order/create")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(bankOrderRequest).retrieve()
                 .onStatus(
                         HttpStatusCode::isError,
                         response ->

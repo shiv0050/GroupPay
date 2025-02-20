@@ -17,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.core.publisher.Mono;
 
 import java.sql.Timestamp;
@@ -27,7 +25,6 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @Slf4j
 @Service
@@ -58,18 +55,20 @@ public class TransactionServiceImpl implements TransactionService {
             transaction.setStatus(TransactionStatus.CANCELLED);
         }
         transaction.setCreatedAt(Timestamp.from(Instant.now()));
-
-        Map<String, Object> body = new HashMap<>();
+//
+//        Map<String, Object> body = new HashMap<>();
+//        body.put("paymentRefId", transaction.getReferenceId());
+//        body.put("status", transaction.getStatus());
+//        if(notifyMerchant(body)) {
+//            transactionRespository.save(transaction);
+//            checkOrderComplete(order.getReferenceId(), order.getNumberOfContributors());
+//        }
+        transactionRespository.save(transaction);
+                Map<String, Object> body = new HashMap<>();
         body.put("paymentRefId", transaction.getReferenceId());
         body.put("status", transaction.getStatus());
-        if(!notifyMerchant(body))
-            return false;
+        return(notifyMerchant(body));
 
-        transactionRespository.save(transaction);
-
-        checkOrderComplete(order.getReferenceId(), order.getNumberOfContributors());
-
-        return true;
     }
 
     protected void checkOrderComplete(UUID orderReferenceId, int numOfContributors){

@@ -6,6 +6,7 @@ import com.example.GroupPayMerchant.models.BookingDetails;
 import com.example.GroupPayMerchant.models.MerchantTransactions;
 import com.example.GroupPayMerchant.models.requests.TxnResponse;
 import com.example.GroupPayMerchant.models.responses.TransactionResponse;
+import com.example.GroupPayMerchant.models.responses.UserResponse;
 import com.example.GroupPayMerchant.repository.MerchantTransactionsRepo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +26,11 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
     @Autowired
     BookingService bookingService;
 
+    @Autowired
+    UserService userService;
+
     @Override
-    public Map<String, Object> createTransaction(UUID userId, double amount, UUID bookingId) {
+    public TransactionResponse createTransaction(UUID userId, double amount, UUID bookingId) {
         MerchantTransactions transaction = new MerchantTransactions();
         transaction.setUserId(userId);
         transaction.setAmount(amount);
@@ -35,9 +39,16 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
         transaction.setPaymentStatus(PaymentStatus.PENDING);
 
         transaction = transactionsRepo.save(transaction);
+        UserResponse user = userService.getUserDetailsById(userId);
 
-        Map<String, Object> res = new HashMap<>();
-        res.put("data", transaction);
+        TransactionResponse res = new TransactionResponse();
+        res.setPaymentRefId(transaction.getPaymentRefId());
+        res.setAmount(transaction.getAmount());
+        res.setCreatedAt(transaction.getCreatedAt());
+        res.setPaymentStatus(transaction.getPaymentStatus());
+        res.setName(user.getName());
+        res.setEmail(user.getEmail());
+
         return res;
     }
 
@@ -45,31 +56,34 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
     public boolean updateStatus(UUID paymentRefId, PaymentStatus status) {
         MerchantTransactions transaction = transactionsRepo.findByPaymentRefId(paymentRefId);
         transaction.setPaymentStatus(status);
+        transactionsRepo.save(transaction);
+        return true;
 
-        transaction = transactionsRepo.save(transaction);
+    }
 
-        BookingDetails bookingDetails = bookingService.getBookingById(transaction.getBookingId());
-
-        checkOrderComplete(transaction.getBookingId(),bookingDetails.getNumberOfContributors());
-
+    private boolean isOrderComplete(UUID bookingId, int numOfContributors){
+        long res = transactionsRepo.checkOrderComplete(bookingId.toString());
+        if(numOfContributors != res)
+            return false;
+        bookingService.updateStatus(bookingId, Status.SUCCESSFUL);
         return true;
     }
 
-    protected void checkOrderComplete(UUID bookingId, int numOfContributors){
-        long res = transactionsRepo.checkOrderComplete(bookingId.toString());
-        if(numOfContributors != res)
-            return;
-        bookingService.updateStatus(bookingId, Status.SUCCESSFUL);
-        transactionsRepo.markTransactionCompleted(bookingId);
+    @Override
+    public List<TransactionResponse> getSuccessfulTransactions(UUID bookingId) {
+//        log.info("booking Id - " + bookingId);
+        List<MerchantTransactions> result = transactionsRepo.findAllByPaymentRefId(bookingId);
+        return result.stream().map(item-> {
+            UserResponse user = userService.getUserDetailsById(item.getUserId());
+            return new TransactionResponse(item.getPaymentRefId(), item.getCreatedAt(), item.getPaymentStatus(), user.getName(), user.getEmail(),item.getAmount());
+        }).collect(Collectors.toList());
     }
 
     @Override
-    public List<TransactionResponse> getSuccessfulTransactions(String bookingId) {
-//        log.info("booking Id - " + bookingId);
-        List<TxnResponse> result = transactionsRepo.getAllTransactions(bookingId);
-        return result.stream().map(item-> new TransactionResponse(item.getAmount(), item.getCreatedAt(), item.getPaymentStatus(), item.getName(), item.getEmail())).collect(Collectors.toList());
+    public boolean checkCompletionStatus(UUID bookingId) {
+        BookingDetails bookingDetails = bookingService.getBookingById(bookingId);
+        return isOrderComplete(bookingId,bookingDetails.getNumberOfContributors());
     }
-
 
 
 }
