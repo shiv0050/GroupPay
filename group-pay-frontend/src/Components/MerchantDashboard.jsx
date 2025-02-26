@@ -16,10 +16,10 @@ function MerchantDashboard() {
       if(usrName!=null)
         setUserName(usrName)
     },[])
-        const nevigate=useNavigate();
+    const nevigate=useNavigate();
     const {isLoggedIn}=useContext(AuthContext);
     const handleBookNow=([price,place,id])=>{
-        {userName!=''?nevigate("/checkout",{state:[price,place,id]}):nevigate("/login")}
+        {isLoggedIn?nevigate("/checkout",{state:[price,place,id]}):nevigate("/login")}
     };
     return (
         <div style={{backgroundImage:`url(${img3})`,backgroundSize: 'cover',backgroundPosition: 'center', paddingBottom:'3rem'}}>

@@ -47,8 +47,7 @@ const Netbanking = () => {
     const [transaction, setTransaction] = useState({})
    
     useEffect(() => {
-        let token = JSON.parse(sessionStorage.getItem('bank_token'));
-        console.log("bank token",token);
+        
     }, [])
     const AccountCard = () => {
         return (

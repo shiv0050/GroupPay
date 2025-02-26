@@ -1,11 +1,4 @@
 import React, { useState, useContext, createContext, useEffect, useMemo } from 'react'
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import Box from "@mui/material/Box"
 import Typography from "@mui/material/Typography"
 import nwgLogo from "../assets/Natwest-logo.jpg"
@@ -13,22 +6,19 @@ import Button from '@mui/material/Button';
 import axios from 'axios';
 import { AuthContext } from '../App';
 import NetBanking from './NWG/Netbanking';
-import { v4 as uuid } from 'uuid'
-import { SettingsPhoneTwoTone } from '@mui/icons-material';
-import Login from './NWG/Login';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { IFrame } from './NWG/layout/IFrame';
 import Header from './NWG/layout/Header';
 import Footer from './NWG/layout/Footer';
-import { useSearchParams } from 'react-router-dom';
 import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
+import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community'; 
+import BankLogin from './BankLogin';
 
+ModuleRegistry.registerModules([ ClientSideRowModelModule ]); 
 
 export const AppContext = createContext();
 
-const Tracker = ({ amount, bookingId, contributors }) => {
+const Tracker = () => {
 
-    const { isLoggedIn } = useContext(AuthContext);
     const [transactions, setTransactions] = useState([])
     const colDefs = useMemo(() => [
         { name: "Name", field: "name" },
@@ -38,69 +28,81 @@ const Tracker = ({ amount, bookingId, contributors }) => {
     ]);
     const [show, setShow] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
+    const [bookingId, setBookingId] = useState('')
+    const [usrId, setUsrId] = useState(null)
 
     const [comp, setComp] = useState({
         page: 'login',
-        amount: amount,
-        bookingId: bookingId,
+        amount: 0,
         paymentRefId: "",
         expiry: "",
-        contributors: contributors
+        contributors: ""
     })
-    const [usrId, setUsrId] = useState(null)
+    
+    useEffect(() => {
+        init()
+    }, [])
 
+    useEffect(() => {
+        if(bookingId){
+            getBookingDetails()
+            getTransactions()
+            checkBookingComplete()
+        }
+    }, [bookingId])
 
+    const init = () => {
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const id = urlParams.get('id');
+        setBookingId(id);
 
-
-
+        let usrId = sessionStorage.getItem('merchUserId')
+        if (usrId != null)
+            setUsrId(usrId)
+    }
     const getTransactions = () => {
-        axios.get(`http://localhost:8002/merchant-transaction/transactions/${bookingId}}`)
+        axios.get(`http://localhost:8002/merchant-transaction/transactions/${bookingId}`)
             .then((response) => {
                 let { data } = response
                 console.log("m_txnlist", data)
                 setTransactions(data)
             }
-            )
+        )
     }
     const checkBookingComplete = () => {
-        axios.get(`http://localhost:8002/merchant-transanction/${bookingId}/status}`)
+        axios.get(`http://localhost:8002/merchant-transaction/status/${bookingId}`)
             .then((response) => {
                 let { data } = response
                 console.log("booking status", data)
-                setShowAlert(true)
-            
+                setShowAlert(data)
             }
-            )
+        )
     }
-    useEffect(() => {
-        setShow(false)
-        getTransactions()
-        checkBookingComplete()
-        let usrId = sessionStorage.getItem('merchUserId')
-        if (usrId != null)
-            setUsrId(usrId)
-    }, [show])
-
+    const getBookingDetails = () => {
+        axios.get(`http://localhost:8002/merchant-booking/${bookingId}`)
+            .then((response) => {
+                let { data } = response
+                console.log("booking details", data)  
+                setUsrId(data.initiatorId)
+                setComp({...comp, amount: data.amount, contributors: data.contributors, expiry: data.expiry})          
+            }
+        )
+    }
     const createTransaction = () => {
-        let request = { userId: usrId, amount: amount / contributors, bookingId: bookingId }
+        let request = { userId: usrId, amount: comp.amount / comp.contributors, bookingId: bookingId }
         axios.post('http://localhost:8002/merchant-transaction/create', request)
             .then((response) => {
                 let { data } = response
                 if (data != null)
                     console.log("Merchant txn Created", data)
-
                 setComp({ ...comp, paymentRefId: data.paymentRefId })
                 setShow(true)
 
             })
     }
-    useEffect(() => {
-        console.log(comp);
-    }, [comp])
     return (
         <>
-            // Data Grid will fill the size of the parent container
-
             <Button sx={{ margin: "5em 50%", backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay your share</Button>
 
             <Box>
@@ -109,7 +111,7 @@ const Tracker = ({ amount, bookingId, contributors }) => {
                         <AppContext.Provider value={{ comp, setComp, show, setShow }}>
                             <Header />
                             <IFrame>
-                                {comp.page == "login" ? <Login /> : <NetBanking />}
+                                {comp.page == "login" ? <BankLogin /> : <NetBanking />}
                             </IFrame>
                             <Footer />
                         </AppContext.Provider>

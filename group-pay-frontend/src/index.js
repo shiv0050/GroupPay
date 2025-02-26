@@ -2,16 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
+import { ReactNotifications } from "react-notifications-component";
+import "react-notifications-component/dist/theme.css";
 import reportWebVitals from './reportWebVitals';
-import MerchantHeader from './Components/MerchantHeader';
-import MerchantLogin from './Components/MerchantLogin';
-import {BrowserRouter as Router, Routes,Route} from 'react-router-dom';
-import MerchantDashboard from './Components/MerchantDashboard';
+
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
-     <App/>
-  </React.StrictMode>
+  <>
+    <ReactNotifications/>
+    <App/>
+  </>
 );
 
 // If you want to start measuring performance in your app, pass a function

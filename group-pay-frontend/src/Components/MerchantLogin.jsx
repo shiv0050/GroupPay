@@ -22,8 +22,7 @@ const Login = () => {
     event.preventDefault();
     setLoading(true);
     await delay(500);
-    console.log(`Username :${inputUsername}, Password :${inputPassword}`);
-    const response=axios.post("http://localhost:8002/merchant-user/login",{email:inputUsername,password:inputPassword})
+    axios.post("http://localhost:8002/merchant-user/login",{email:inputUsername,password:inputPassword})
     .then(data => {
       console.log(data.data.success);
       if (!data.data.success) {
@@ -33,6 +32,7 @@ const Login = () => {
         sessionStorage.setItem('merchUserId',data.data.user.userId)
         sessionStorage.setItem('merchUserName',data.data.user.name)
         sessionStorage.setItem('merchUserEmail',data.data.user.email)
+        localStorage.setItem("merchantAuth", data.data.userToken);
 
           setIsLoggedIn(data.data.user);
           nevigate("/");
