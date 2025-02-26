@@ -74,7 +74,7 @@ public class BookingServiceImpl implements BookingService{
 
     @Override
     public BookingDetails getBookingById(UUID id) {
-        return bookingRepository.getReferenceById(id) ;
+        return bookingRepository.findById(id).orElseGet(() -> null) ;
     }
 
     @Override

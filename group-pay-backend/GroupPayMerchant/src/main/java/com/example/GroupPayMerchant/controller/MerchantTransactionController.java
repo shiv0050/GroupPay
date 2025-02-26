@@ -32,17 +32,13 @@ public class MerchantTransactionController {
         return ResponseEntity.ok(transactionService.updateStatus(body.getPaymentRefId(),body.getStatus()));
 
     }
-    @GetMapping("/{bookingId}/status")
+    @GetMapping("/status/{bookingId}")
     public Boolean checkCompletionStatus(@PathVariable UUID bookingId){
         return transactionService.checkCompletionStatus(bookingId) ;
     }
     @GetMapping ("/transactions/{bookingId}")
     public List<TransactionResponse> getTransactions(@PathVariable UUID bookingId) {
         return transactionService.getSuccessfulTransactions(bookingId);
-    }
-    @GetMapping ("/transactions/{payRefId}")
-    public List<TransactionResponse> getTransactionStatus(@PathVariable UUID payRefId) {
-        return transactionService.getSuccessfulTransactions(payRefId);
     }
 
 }
