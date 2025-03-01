@@ -62,7 +62,8 @@ const LoginForm = () => {
         </Container>
     )
 }
-const RegisterForm = () => {
+const RegisterForm = ({changeTab}) => {
+    const {setValue}=useContext(AppContext);
 
     const [email,setEmail]=useState('')
     const [password,setPassword]=useState('')
@@ -117,13 +118,14 @@ const RegisterForm = () => {
         console.log(value)
         setPin(value)
     }
-    const registerUser=({changeTab})=>{
+    const registerUser=()=>{
         let request={
             firstName:firstName,lastName:lastName,password:password,phone:phoneNo,dob:dob,addressLine1:address,state:state,city:city,postalCode:zip,email:email,governmentId:id,pin:pin
         }
         axios.post("http://localhost:8001/user/register",request).then(res=>{
             console.log(res.data);
             if(res.data!=null)
+                
                 changeTab(1)
         })
     }

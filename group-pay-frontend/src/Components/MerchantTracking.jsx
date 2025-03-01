@@ -11,7 +11,7 @@ import Header from './NWG/layout/Header';
 import Footer from './NWG/layout/Footer';
 import { AgGridReact } from 'ag-grid-react'; // React Data Grid Component
 import { ClientSideRowModelModule, ModuleRegistry } from 'ag-grid-community'; 
-import BankLogin from './BankLogin';
+import Login from './NWG/Login';
 
 ModuleRegistry.registerModules([ ClientSideRowModelModule ]); 
 
@@ -36,25 +36,28 @@ const Tracker = () => {
         amount: 0,
         paymentRefId: "",
         expiry: "",
-        contributors: ""
+        contributors: "",
+        bookingId:bookingId
     })
     
     useEffect(() => {
         init()
+
     }, [])
 
     useEffect(() => {
-        if(bookingId){
+        if(bookingId!=''){
             getBookingDetails()
             getTransactions()
             checkBookingComplete()
         }
-    }, [bookingId])
+    }, [bookingId,show])
 
     const init = () => {
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
         const id = urlParams.get('id');
+        console.log(id)
         setBookingId(id);
 
         let usrId = sessionStorage.getItem('merchUserId')
@@ -85,7 +88,7 @@ const Tracker = () => {
                 let { data } = response
                 console.log("booking details", data)  
                 setUsrId(data.initiatorId)
-                setComp({...comp, amount: data.amount, contributors: data.contributors, expiry: data.expiry})          
+                setComp({...comp, amount: data.amount, contributors: data.contributors, expiry: data.expiry, bookingId: bookingId})          
             }
         )
     }
@@ -103,7 +106,6 @@ const Tracker = () => {
     }
     return (
         <>
-            <Button sx={{ margin: "5em 50%", backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay your share</Button>
 
             <Box>
                 {
@@ -111,9 +113,9 @@ const Tracker = () => {
                         <AppContext.Provider value={{ comp, setComp, show, setShow }}>
                             <Header />
                             <IFrame>
-                                {comp.page == "login" ? <BankLogin /> : <NetBanking />}
+                                {comp.page == "login" ? <Login /> : <NetBanking />}
                             </IFrame>
-                            <Footer />
+                            {/* <Footer /> */}
                         </AppContext.Provider>
 
                     )
@@ -123,19 +125,15 @@ const Tracker = () => {
                             <div style={{ height: 500 }}>booking Complete</div>
 
                         ) : (<div style={{ height: 500 }}>
+                            <Button sx={{ margin: "5em 50%", backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay your share</Button>
+
                             <AgGridReact
                                 rowData={transactions}
                                 columnDefs={colDefs}
                             />
 
-                            <Button sx={{ margin: "5em 50%", backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Pay Now</Button>
 
-                            <Box sx={{ display: "flex", alignItems: "center", justifySelf: "flex-start", flexDirection: "column" }}>
-                                <Typography>powered by</Typography>
-
-                                <img src={nwgLogo} width={'100px'} />
-                            </Box>
-
+                           
                         </div>
                         )}
             </Box>

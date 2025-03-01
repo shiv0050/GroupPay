@@ -39,8 +39,9 @@ function App() {
             <Route path="/nwg-netbanking" element={<Netbanking/>}/>
 
           </Routes>
-          <MerchantFooter/>
         </Router>
+        <MerchantFooter/>
+
       </AuthContext.Provider>
     </div>
   );

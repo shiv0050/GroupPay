@@ -99,13 +99,14 @@ const Netbanking = () => {
 
             };
             let token = sessionStorage.getItem('token')
+            console.log("token",token)
          
             axios.post('http://localhost:8001/transaction/create', req, { headers: { Authorization: token } })
                 .then(res => {
                     if (res.data.success) {
                         console.log(res.data)
                         // navigate(`/tracker?bookingId=${comp.bookingId}&amount=${comp.amount}&expiry=${comp.expiry}&contributors=${comp.contributors}&frombank=true`)
-                    setShow(true);
+                    setShow(false);
                     }
                 })
 
@@ -158,7 +159,7 @@ const Netbanking = () => {
                             Payment Reference
                         </Typography>
                         <Typography sx={{ fontSize: 14 }} color="#894570" gutterBottom>
-                            {comp.bookingId}
+                            {comp.paymentRefId}
                         </Typography>
                         <Typography sx={{ fontSize: 14 }} color="black" gutterBottom>
                             Amount
@@ -196,7 +197,7 @@ const Netbanking = () => {
                             />
                         </Box>
                         <Box display={"flex"} justifyContent={"space-between"}>
-                            <Typography sx={{ fontSize: 14 }} color="#894570" gutterBottom>
+                            <Typography sx={{ fontSize: 14 }} color="#894570" gutterBottom onClick={()=>setShow(false)}>
                                 Back
                             </Typography>
                             <Button sx={{ backgroundColor: "#5A287D", color: "white" }} size="small" onClick={createTransaction}>Authorize</Button>

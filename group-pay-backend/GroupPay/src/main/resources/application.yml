@@ -5,6 +5,12 @@ spring:
     url: jdbc:mysql://group-pay-bankofapis.e.aivencloud.com:10616/bank_of_apis?createDatabaseIfNotExist=true
     username: avnadmin
     password: AVNS_phRIoLjrR-0llqtiev_
+    hikari:
+      minimumIdle: 2
+      maximumPoolSize: 10
+      idleTimeout: 120000
+      connectionTimeout: 300000
+      leakDetectionThreshold: 300000
   jpa:
     hibernate:
       ddl-auto: update
