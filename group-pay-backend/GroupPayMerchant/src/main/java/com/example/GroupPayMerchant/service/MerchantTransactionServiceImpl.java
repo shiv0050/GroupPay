@@ -71,12 +71,8 @@ public class MerchantTransactionServiceImpl implements MerchantTransactionServic
 
     @Override
     public List<TransactionResponse> getSuccessfulTransactions(UUID bookingId) {
-//        log.info("booking Id - " + bookingId);
-        List<MerchantTransactions> result = transactionsRepo.findAllByPaymentRefId(bookingId);
-        return result.stream().map(item-> {
-            UserResponse user = userService.getUserDetailsById(item.getUserId());
-            return new TransactionResponse(item.getPaymentRefId(), item.getCreatedAt(), item.getPaymentStatus(), user.getName(), user.getEmail(),item.getAmount());
-        }).collect(Collectors.toList());
+        List<TxnResponse> result = transactionsRepo.getAllTransactions(bookingId.toString());
+        return result.stream().map(item-> new TransactionResponse(item.getRefernceId(), item.getCreatedAt(), item.getPaymentStatus(), item.getName(), item.getEmail(), item.getAmount())).toList();
     }
 
     @Override
